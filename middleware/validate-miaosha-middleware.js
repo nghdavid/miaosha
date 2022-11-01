@@ -1,6 +1,15 @@
 const validator = require('validator');
 const answers = { 1: 'a', 2: 'a', 3: 'a', 4: 'a', 5: 'a' };
+const ActivityClass = require('../util/activity');
+const Activity = new ActivityClass();
+
 const validateMiaosha = async (req, res, next) => {
+    if (!Activity.isStart()) {
+        return res.status(400).json({ error: 'Activity has not started yet' });
+    }
+    if (Activity.isEnd()) {
+        return res.status(400).json({ error: 'Activity is over' });
+    }
     const { id, answer, question } = req.body;
     if (!id || !answer || !question || validator.isEmpty(answer)) {
         return res.status(400).json({ error: 'id or answer or question missed' });
