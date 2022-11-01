@@ -1,21 +1,24 @@
-const db = require('../config/db');
+const Cache = require('../config/redis');
+const CACHE_PEOPLE_KEY = 'people';
 
 /**
- *
- * @param {*} a - a
- *
- * * This function
- *
+ * * This function add 'people' (+=1) in cache
  */
-const template = async (data) => {
+const addPeople = async () => {
     try {
+        if (Cache.ready) {
+            const people = await Cache.incr(CACHE_PEOPLE_KEY);
+            return people;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
     } catch (err) {
-        console.error('Error happen in  model');
+        console.error('Error happen in addPeople model');
         console.error(err);
-        return { error: 'DB Error:  model' };
+        return { error: 'Redis Error: addPeople model' };
     }
 };
 
 module.exports = {
-    template,
+    addPeople,
 };

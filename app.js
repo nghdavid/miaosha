@@ -1,7 +1,7 @@
 require('dotenv').config();
 const morganBody = require('morgan-body');
 const { API_VERSION } = process.env;
-// const miaoshaRoute = require('./routes/miaosha-route');
+const miaoshaRoute = require('./route/miaosha-route');
 
 // Express Initialization
 const express = require('express');
@@ -13,7 +13,7 @@ app.set('json spaces', 2);
 
 app.use(express.static('public'));
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: false }));
 morganBody(app, { logResponseBody: false });
 
 // CORS allow all
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
     res.redirect('/test.html');
 });
 // API routes
-// app.use('/api/' + API_VERSION, [miaoshaRoute]);
+app.use('/api/' + API_VERSION, [miaoshaRoute]);
 
 // Page not found
 app.use(function (req, res, next) {

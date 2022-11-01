@@ -1,43 +1,36 @@
 /* eslint-disable object-shorthand */
 /* eslint-disable func-names */
 const Redis = require('ioredis');
-require('dotenv').config(); // load database parameter
-// const redis = new Redis();
+require('dotenv').config();
+const { CACHE_PORT, CACHE_HOST, CACHE_USER, CACHE_PASSWORD } = process.env;
 const redis = new Redis({
-    port: process.env.REDIS_PORT,
-    host: process.env.REDIS_HOST,
-    username: process.env.REDIS_USER,
-    password: process.env.REDIS_PASS,
+    port: CACHE_PORT,
+    host: CACHE_HOST,
+    username: CACHE_USER,
+    password: CACHE_PASSWORD,
     showFriendlyErrorStack: true,
     retryStrategy: function () {
-        const delay = 5; // Math.min(times * 50, 200);
+        const delay = 5;
         return delay;
-        // if (times % 4 === 0) {
-        //   console.error('Redis reconnect exhausted after 3 retries');
-        //   return null;
-        // }
-        // return 200;
     },
 });
 redis.ready = false;
 redis.on('ready', async () => {
     redis.ready = true;
-    await redis.flushDb();
     console.log('Redis is ready');
 });
 
-// redis.connect().catch(() => {
-//   console.error('Connection to redis failed');
-// });
 redis.on('error', async () => {
+    if (redis.ready) {
+        console.error('Error in Redis');
+        console.error('Redis connection error');
+    }
     redis.ready = false;
-    console.error('Error in Redis');
-    // redis.disconnect();
 });
-// const clearRedisDb = async () => {
-//   console.debug('Cleaning Redis');
-//   await redis.flushdb();
-// };
 
-// clearRedisDb(); // Clean Redis when an app initializes
+const clearRedisDb = async () => {
+    console.warn('Cleaning Redis');
+    await redis.flushdb();
+};
+clearRedisDb(); // Clean Redis when an app initializes
 module.exports = redis;
