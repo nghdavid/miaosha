@@ -23,8 +23,6 @@ class Activity {
         this.endTime = DateTime.local(this.year, this.month, this.date, this.hour - this.timeZoneDiff, this.minute)
             .plus({ minutes: totalTime })
             .setZone('Asia/Taipei');
-        console.log(this.startTime);
-        console.log(this.endTime);
     }
     isStart() {
         const now = DateTime.now().setZone('Asia/Taipei');
