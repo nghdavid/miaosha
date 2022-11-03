@@ -4,7 +4,7 @@ const Queue = require('../model/queue-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
 
-const EXCHANGE_NAME = 'people_queue';
+const EXCHANGE_NAME = 'check_payment';
 const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
 const QUEUE_NAME = 'waiting';
@@ -28,7 +28,7 @@ const STATUS = {
     }
 })();
 
-const consumer = async () => {
+const checkPayment = async () => {
     const connection = await amqplib.connect({
         protocol: 'amqp',
         hostname: 'localhost',
@@ -48,43 +48,53 @@ const consumer = async () => {
     channel.consume(
         q.queue,
         async (msg) => {
-            console.log('Receive Message! Processing....');
+            console.debug('');
+            console.debug('檢查有無付款了喔');
             if (msg.content) {
                 const userId = Number(msg.content);
                 console.debug('The user id is: ', userId);
                 const status = await Queue.getStatus(userId);
                 // 確認redis有無錯誤
                 if (status !== null && status.error) {
-                    console.error('Consumer has error');
+                    console.error('payment checker has error');
                     throw new Error('Cannot access cache!!!');
                 }
-                // 若使用者未搶過，status應為null
-                // 若使用者搶過，status為 -1~2
-                if (status !== null) {
-                    // 代表使用者已經搶過
-                    console.debug('此使用者已經搶過');
-                    return;
-                }
-                const stock = await Queue.decrStock(); // 庫存減一
 
-                // 若庫存為0，將使用者加入候補名單，並將使用者的status設為0(standby)
-                // 庫存也要補回來(加一)
-                if (stock < 0) {
+                if (Number(status) === STATUS.PAID) {
+                    // 使用者已經付款，庫存名額不會釋出
+                    console.debug(`User-${userId} 已經付過款`); // 候補使用者搶購成功
                     const transactionNum = await Queue.getTransaction();
                     if (transactionNum >= STOCK) {
-                        await Promise.all([Queue.setStatus(userId, STATUS.FAIL), Queue.addStock()]);
-                        console.debug('庫存已全部賣完');
-                        return;
+                        const standbyList = await Queue.getStandbyList();
+                        const totalFailSets = standbyList.map((id) => {
+                            console.warn(`User-${id}搶購失敗`);
+                            return Queue.setStatus(id, STATUS.FAIL);
+                        });
+                        await Promise.all(totalFailSets);
+                        console.warn('庫存已全部賣完!!!!!!');
                     }
-                    console.debug('加入候補名單');
-                    await Promise.all([Queue.setStatus(userId, STATUS.STANDBY), Queue.addStock(), Queue.enqueue(CACHE_STANDBY_KEY, userId)]);
                     return;
                 }
-                // 使用者搶購成功
-                await Queue.setStatus(userId, STATUS.SUCCESS);
-                console.debug('搶購成功');
-                console.debug('現在庫存剩', stock, '個');
-                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, msg.content, TIME_LIMIT);
+
+                console.debug(`User-${userId} 忘記付款了`); // 候補使用者搶購成功
+                await Queue.setStatus(userId, STATUS.FAIL); // 將逾時未付款者的狀態為更新為失敗
+
+                const standbyUserId = await Queue.dequeue(CACHE_STANDBY_KEY); //從候補名單拿出一位使用者
+                if (standbyUserId === null) {
+                    Queue.addStock(); // 回補庫存
+                    console.info('已經無人在候補');
+                    return;
+                }
+
+                const standbyStatus = await Queue.getStatus(standbyUserId);
+                console.debug(`User-${standbyUserId} 排到了`); // 候補使用者搶購成功
+                if (Number(standbyStatus) !== STATUS.STANDBY) {
+                    console.warn('This standby user is incorrect');
+                    return;
+                }
+
+                await Queue.setStatus(standbyUserId, STATUS.SUCCESS); // 更新使用者狀態為搶購成功
+                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, standbyUserId, TIME_LIMIT);
                 console.debug('Send success user to waiting queue');
             } else {
                 console.warn('Receive nothing!');
@@ -94,4 +104,4 @@ const consumer = async () => {
     );
 };
 
-consumer();
+checkPayment();

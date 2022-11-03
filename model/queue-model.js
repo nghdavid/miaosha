@@ -1,6 +1,8 @@
 const Cache = require('../config/redis');
 const CACHE_USER_KEY = 'id:';
 const CACHE_STOCK_KEY = 'stock';
+const CACHE_TRANSACTION_KEY = 'transaction';
+const CACHE_STANDBY_KEY = 'standby';
 
 /**
  * * This function get user status from cache
@@ -125,11 +127,49 @@ const dequeue = async (queueName) => {
     }
 };
 
+/**
+ * * This function get how many orders are paid
+ */
+const getTransaction = async () => {
+    try {
+        if (Cache.ready) {
+            const transaction = await Cache.get(`${CACHE_TRANSACTION_KEY}`);
+            return transaction;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in getTransaction model');
+        console.error(err);
+        return { error: 'Redis Error: getTransaction model' };
+    }
+};
+
+/**
+ * * This function get who are in standby list
+ */
+const getStandbyList = async () => {
+    try {
+        if (Cache.ready) {
+            const list = await Cache.lrange(`${CACHE_STANDBY_KEY}`, 0, -1);
+            return list;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in getTransaction model');
+        console.error(err);
+        return { error: 'Redis Error: getTransaction model' };
+    }
+};
+
 module.exports = {
     getStatus,
     addStock,
     decrStock,
+    getTransaction,
     setStatus,
     enqueue,
     dequeue,
+    getStandbyList,
 };

@@ -44,6 +44,15 @@ class MessageQueueService {
         this.channel.publish(exchangeName, '', Buffer.from(msg));
     }
 
+    async publishToQueue(exchangeName, queueName, msg, ttl) {
+        ttl = ttl * 60 * 1000;
+        await this.channel.assertQueue(queueName, {
+            durable: false,
+            messageTtl: ttl,
+            deadLetterExchange: exchangeName,
+        });
+        this.channel.sendToQueue(queueName, Buffer.from(msg));
+    }
     closeChannel() {
         this.channel.close();
         console.info('Closing RabbitMQ channel');
