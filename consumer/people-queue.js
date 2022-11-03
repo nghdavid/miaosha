@@ -1,5 +1,7 @@
 const amqplib = require('amqplib');
 const EXCHANGE_NAME = 'people_queue';
+const CACHE_STANDBY_KEY = 'standby';
+
 const STATUS = {
     FAIL: -1,
     STANDBY: 0,
@@ -41,23 +43,24 @@ const getMsg = async () => {
                 }
                 // 若使用者未搶過，status應為null
                 // 若使用者搶過，status為 -1~2
-                if (status !== null && status !== 0) {
-                    // 代表使用者已經搶過且不在候補名單
+                if (status !== null) {
+                    // 代表使用者已經搶過
                     console.debug('此使用者已經搶過');
                     return;
                 }
                 const stock = await Queue.decrStock(); // 庫存減一
 
-                // 若庫存為0，將使用者加入候補名單，並將使用者的status設為3
+                // 若庫存為0，將使用者加入候補名單，並將使用者的status設為0(standby)
                 // 庫存也要補回來(加一)
                 if (stock < 0) {
                     console.debug('加入候補名單');
-                    await Promise.all([Queue.setStatus(userId, STATUS.STANDBY), Queue.addStock()]);
+                    await Promise.all([Queue.setStatus(userId, STATUS.STANDBY), Queue.addStock(), Queue.enqueue(CACHE_STANDBY_KEY, userId)]);
                     return;
                 }
                 // 使用者搶購成功
                 await Queue.setStatus(userId, STATUS.SUCCESS);
                 console.debug('搶購成功');
+                console.debug('現在庫存剩', stock, '個');
             } else {
                 console.warn('Receive nothing!');
             }

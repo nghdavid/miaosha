@@ -80,9 +80,56 @@ const decrStock = async () => {
     }
 };
 
+/**
+ *
+ * @param {*} queueName - The name of message queue
+ * @param {*} message - Message from producer
+ *
+ * * This function insert message into queue
+ *
+ */
+const enqueue = async (queueName, message) => {
+    try {
+        if (Cache.ready) {
+            await Cache.lpush(queueName, message);
+            return 1;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in enqueue model');
+        console.error(err);
+        return { error: 'enqueue failed' };
+    }
+};
+
+/**
+ *
+ * @param {*} queueName - The name of message queue
+ *
+ * * This function pop one value from queue
+ *
+ */
+const dequeue = async (queueName) => {
+    try {
+        if (Cache.ready) {
+            const popMessage = await Cache.rpop(queueName);
+            return popMessage;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in dequeue model');
+        console.error(err);
+        return { error: 'dequeue failed' };
+    }
+};
+
 module.exports = {
     getStatus,
     addStock,
     decrStock,
     setStatus,
+    enqueue,
+    dequeue,
 };
