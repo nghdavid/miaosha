@@ -9,7 +9,7 @@ const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
 const QUEUE_NAME = 'waiting';
 
-const { TIME_LIMIT, STOCK } = process.env;
+const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD } = process.env;
 
 const STATUS = {
     FAIL: -1,
@@ -31,10 +31,10 @@ const STATUS = {
 const consumer = async () => {
     const connection = await amqplib.connect({
         protocol: 'amqp',
-        hostname: 'localhost',
-        port: 5672,
-        username: 'guest',
-        password: 'guest',
+        hostname: RABBIT_HOST,
+        port: RABBIT_PORT,
+        username: RABBIT_USER,
+        password: RABBIT_PASSWORD,
         locale: 'en_US',
         frameMax: 0,
         heartbeat: 0,
@@ -48,7 +48,8 @@ const consumer = async () => {
     channel.consume(
         q.queue,
         async (msg) => {
-            console.log('Receive Message! Processing....');
+            console.debug('');
+            console.debug('Receive Message! Processing....');
             if (msg.content) {
                 const userId = Number(msg.content);
                 console.debug('The user id is: ', userId);
@@ -71,6 +72,8 @@ const consumer = async () => {
                 // 庫存也要補回來(加一)
                 if (stock < 0) {
                     const transactionNum = await Queue.getTransaction();
+                    // 若成功搶購者都已經付款，那不把使用者排入候補名單。
+                    // 直接判定搶購失敗
                     if (transactionNum >= STOCK) {
                         await Promise.all([Queue.setStatus(userId, STATUS.FAIL), Queue.addStock()]);
                         console.debug('庫存已全部賣完');
@@ -95,3 +98,6 @@ const consumer = async () => {
 };
 
 consumer();
+module.exports = {
+    consumer,
+};

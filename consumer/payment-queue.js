@@ -9,7 +9,7 @@ const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
 const QUEUE_NAME = 'waiting';
 
-const { TIME_LIMIT, STOCK } = process.env;
+const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD } = process.env;
 
 const STATUS = {
     FAIL: -1,
@@ -31,10 +31,10 @@ const STATUS = {
 const checkPayment = async () => {
     const connection = await amqplib.connect({
         protocol: 'amqp',
-        hostname: 'localhost',
-        port: 5672,
-        username: 'guest',
-        password: 'guest',
+        hostname: RABBIT_HOST,
+        port: RABBIT_PORT,
+        username: RABBIT_USER,
+        password: RABBIT_PASSWORD,
         locale: 'en_US',
         frameMax: 0,
         heartbeat: 0,
@@ -62,23 +62,28 @@ const checkPayment = async () => {
 
                 if (Number(status) === STATUS.PAID) {
                     // 使用者已經付款，庫存名額不會釋出
-                    console.debug(`User-${userId} 已經付過款`); // 候補使用者搶購成功
-                    const transactionNum = await Queue.getTransaction();
-                    if (transactionNum >= STOCK) {
+                    console.debug(`User-${userId} 已經付過款`);
+                    const payment = await Queue.addSuccessPayment(); //記錄目前有幾個付款成功
+                    // 如果記錄到成功的payment跟STOCK一樣多，代表這是最後一筆成功的訂單
+                    // 也就是所有庫存算是正式賣完
+                    if (payment >= STOCK) {
                         const standbyList = await Queue.getStandbyList();
-                        const totalFailSets = standbyList.map((id) => {
-                            console.warn(`User-${id}搶購失敗`);
-                            return Queue.setStatus(id, STATUS.FAIL);
-                        });
-                        await Promise.all(totalFailSets);
+                        if (standbyList.length > 0) {
+                            await Queue.deleteStandby();
+                            const totalFailSets = standbyList.map((id) => {
+                                console.warn(`User-${id}搶購失敗`);
+                                return Queue.setStatus(id, STATUS.FAIL);
+                            });
+                            await Promise.all(totalFailSets);
+                        }
                         console.warn('庫存已全部賣完!!!!!!');
                     }
                     return;
                 }
 
-                console.debug(`User-${userId} 忘記付款了`); // 候補使用者搶購成功
+                console.debug(`User-${userId} 忘記付款了`);
                 await Queue.setStatus(userId, STATUS.FAIL); // 將逾時未付款者的狀態為更新為失敗
-
+                // 候補使用者搶購成功
                 const standbyUserId = await Queue.dequeue(CACHE_STANDBY_KEY); //從候補名單拿出一位使用者
                 if (standbyUserId === null) {
                     Queue.addStock(); // 回補庫存
@@ -105,3 +110,6 @@ const checkPayment = async () => {
 };
 
 checkPayment();
+module.exports = {
+    checkPayment,
+};

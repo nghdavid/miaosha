@@ -3,6 +3,7 @@ const CACHE_USER_KEY = 'id:';
 const CACHE_STOCK_KEY = 'stock';
 const CACHE_TRANSACTION_KEY = 'transaction';
 const CACHE_STANDBY_KEY = 'standby';
+const CACHE_SUCCESS_KEY = 'success_pay';
 
 /**
  * * This function get user status from cache
@@ -163,6 +164,42 @@ const getStandbyList = async () => {
     }
 };
 
+/**
+ * * This function delete standby list
+ */
+const deleteStandby = async () => {
+    try {
+        if (Cache.ready) {
+            await Cache.del(`${CACHE_STANDBY_KEY}`);
+            return;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in getTransaction model');
+        console.error(err);
+        return { error: 'Redis Error: getTransaction model' };
+    }
+};
+
+/**
+ * * This function add 'success_pay' (+=1) in cache
+ */
+const addSuccessPayment = async () => {
+    try {
+        if (Cache.ready) {
+            const payment = await Cache.incr(CACHE_SUCCESS_KEY);
+            return payment;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in addSuccessPayment model');
+        console.error(err);
+        return { error: 'Redis Error: addSuccessPayment model' };
+    }
+};
+
 module.exports = {
     getStatus,
     addStock,
@@ -172,4 +209,6 @@ module.exports = {
     enqueue,
     dequeue,
     getStandbyList,
+    addSuccessPayment,
+    deleteStandby,
 };
