@@ -4,6 +4,11 @@ const Queue = require('../model/queue-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
 
+const CONSUMER_QUANTITY = Number(process.argv[2]);
+const CONSUMER_NUM = Number(process.argv[3]);
+console.debug(`Consumer有${CONSUMER_QUANTITY}個`);
+console.debug(`這是${CONSUMER_NUM + 1}號Consumer`);
+
 const EXCHANGE_NAME = 'people_queue';
 const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
@@ -52,6 +57,10 @@ const consumer = async (io) => {
             console.debug('Receive Message! Processing....');
             if (msg.content) {
                 const userId = Number(msg.content);
+                if (userId % CONSUMER_QUANTITY !== CONSUMER_NUM) {
+                    console.debug(`我不負責user ${userId}`);
+                    return;
+                }
                 console.debug('The user id is: ', userId);
                 const status = await Queue.getStatus(userId);
                 // 確認redis有無錯誤
@@ -75,16 +84,20 @@ const consumer = async (io) => {
                     // 若成功搶購者都已經付款，那不把使用者排入候補名單。
                     // 直接判定搶購失敗
                     if (transactionNum >= STOCK) {
+                        // 通知使用者搶購失敗
+                        io.to(userId).emit('notify', STATUS.FAIL);
                         await Promise.all([Queue.setStatus(userId, STATUS.FAIL), Queue.addStock()]);
                         console.debug('庫存已全部賣完');
                         return;
                     }
                     console.debug('加入候補名單');
+                    // 通知使用者候補中
+                    io.to(userId).emit('notify', STATUS.STANDBY);
                     await Promise.all([Queue.setStatus(userId, STATUS.STANDBY), Queue.addStock(), Queue.enqueue(CACHE_STANDBY_KEY, userId)]);
                     return;
                 }
-                // 使用者搶購成功
-                io.to(userId).emit('notify', userId);
+                // 通知使用者搶購成功
+                io.to(userId).emit('notify', STATUS.SUCCESS);
                 await Queue.setStatus(userId, STATUS.SUCCESS);
                 console.debug('搶購成功');
                 console.debug('現在庫存剩', stock, '個');

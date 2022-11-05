@@ -4,6 +4,9 @@ const Queue = require('../model/queue-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
 
+const CONSUMER_QUANTITY = Number(process.argv[2]);
+const CONSUMER_NUM = Number(process.argv[3]);
+
 const EXCHANGE_NAME = 'check_payment';
 const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
@@ -52,6 +55,10 @@ const checkPayment = async (io) => {
             console.debug('檢查有無付款了喔');
             if (msg.content) {
                 const userId = Number(msg.content);
+                if (userId % CONSUMER_QUANTITY !== CONSUMER_NUM) {
+                    console.debug(`我不負責user ${userId}`);
+                    return;
+                }
                 console.debug('The user id is: ', userId);
                 const status = await Queue.getStatus(userId);
                 // 確認redis有無錯誤
@@ -72,6 +79,8 @@ const checkPayment = async (io) => {
                             await Queue.deleteStandby();
                             const totalFailSets = standbyList.map((id) => {
                                 console.warn(`User-${id}搶購失敗`);
+                                // 通知使用者搶購失敗
+                                io.to(id).emit('notify', STATUS.FAIL);
                                 return Queue.setStatus(id, STATUS.FAIL);
                             });
                             await Promise.all(totalFailSets);
@@ -82,6 +91,8 @@ const checkPayment = async (io) => {
                 }
 
                 console.debug(`User-${userId} 忘記付款了`);
+                // ? 尚不確定沒有付款的使用者要不要通知失敗
+                io.to(userId).emit('notify', STATUS.FAIL);
                 await Queue.setStatus(userId, STATUS.FAIL); // 將逾時未付款者的狀態為更新為失敗
                 // 候補使用者搶購成功
                 const standbyUserId = await Queue.dequeue(CACHE_STANDBY_KEY); //從候補名單拿出一位使用者
@@ -97,7 +108,8 @@ const checkPayment = async (io) => {
                     console.warn('This standby user is incorrect');
                     return;
                 }
-
+                // 通知使用者搶購成功
+                io.to(userId).emit('notify', STATUS.SUCCESS);
                 await Queue.setStatus(standbyUserId, STATUS.SUCCESS); // 更新使用者狀態為搶購成功
                 await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, standbyUserId, TIME_LIMIT);
                 console.debug('Send success user to waiting queue');
