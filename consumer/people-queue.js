@@ -28,7 +28,7 @@ const STATUS = {
     }
 })();
 
-const consumer = async () => {
+const consumer = async (io) => {
     const connection = await amqplib.connect({
         protocol: 'amqp',
         hostname: RABBIT_HOST,
@@ -84,6 +84,7 @@ const consumer = async () => {
                     return;
                 }
                 // 使用者搶購成功
+                io.to(userId).emit('notify', userId);
                 await Queue.setStatus(userId, STATUS.SUCCESS);
                 console.debug('搶購成功');
                 console.debug('現在庫存剩', stock, '個');
@@ -97,7 +98,7 @@ const consumer = async () => {
     );
 };
 
-consumer();
+// consumer();
 module.exports = {
     consumer,
 };

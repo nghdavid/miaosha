@@ -28,7 +28,7 @@ const STATUS = {
     }
 })();
 
-const checkPayment = async () => {
+const checkPayment = async (io) => {
     const connection = await amqplib.connect({
         protocol: 'amqp',
         hostname: RABBIT_HOST,
@@ -109,7 +109,7 @@ const checkPayment = async () => {
     );
 };
 
-checkPayment();
+// checkPayment();
 module.exports = {
     checkPayment,
 };
