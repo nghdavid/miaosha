@@ -40,20 +40,15 @@ function informUser() {
         io.emit('url', url, password);
     }
 }
-let timer;
+
 io.on('connection', (socket) => {
     console.log('a user connected');
-    informUser();
-    if (timer !== undefined) {
-        clearInterval(timer);
-    }
-    timer = setInterval(informUser, 50);
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
 });
-// 可以把setInterval(informUser, 50)移出來
 
 httpServer.listen(port, () => {
     console.log(`Server is listening on port ${port}...`);
 });
+setInterval(informUser, 50);
