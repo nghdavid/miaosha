@@ -2,10 +2,12 @@ require('dotenv').config();
 const process = require('process');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const { createAdapter } = require('@socket.io/redis-adapter');
 const app = require('./consumer-app');
 const { checkPayment } = require('./consumer/payment-queue');
 const { consumer } = require('./consumer/people-queue');
 const httpServer = createServer(app);
+const { pubClient, subClient } = require('./config/redis-cluster');
 
 const { CONSUMER_PORT_TEST, CONSUMER_PORT, NODE_ENV } = process.env;
 
@@ -20,10 +22,11 @@ const io = new Server(httpServer, {
         credentials: true,
     },
 });
+io.adapter(createAdapter(pubClient, subClient));
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.join(1);
+    socket.join(2);
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
@@ -33,5 +36,10 @@ httpServer.listen(port, () => {
     console.log(`Server is listening on port ${port}...`);
 });
 
-consumer(io);
-checkPayment(io);
+try {
+    // Consumer
+    consumer(io);
+    checkPayment(io);
+} catch (err) {
+    console.error(err);
+}
