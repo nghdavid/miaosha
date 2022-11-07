@@ -1,78 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test notify</title>
-  <style>
-    body {
-      margin: 0;
-      padding-bottom: 3rem;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    #form {
-      background: rgba(0, 0, 0, 0.15);
-      padding: 0.25rem;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      height: 3rem;
-      box-sizing: border-box;
-      backdrop-filter: blur(10px);
-    }
-
-    #input {
-      border: none;
-      padding: 0 1rem;
-      flex-grow: 1;
-      border-radius: 2rem;
-      margin: 0.25rem;
-    }
-
-    #input:focus {
-      outline: none;
-    }
-
-    #form>button {
-      background: #333;
-      border: none;
-      padding: 0 1rem;
-      margin: 0.25rem;
-      border-radius: 3px;
-      outline: none;
-      color: #fff;
-    }
-
-    #messages {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    #messages>li {
-      padding: 0.5rem 1rem;
-    }
-
-    #messages>li:nth-child(odd) {
-      background: #efefef;
-    }
-  </style>
+  <title>查詢</title>
 </head>
 <body>
-  <ul id="messages"></ul>
-  <form id="form" action="">
-    <input id="input" autocomplete="off" /><button>Send</button>
-  </form>
+  <h1>查詢頁面</h1>
   <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"
     integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
     crossorigin="anonymous"></script>
+  <script src='//cdn.jsdelivr.net/npm/sweetalert2@11'></script>
   <script>
+    const STATUS = {
+      FAIL: -1,
+      STANDBY: 0,
+      SUCCESS: 1,
+      PAID: 2,
+    };
     console.log('I am lookup page!');
-    const socket = io();
-    socket.on('notify', (result) => {
-      console.log(result);
+    const access_token = window.localStorage.getItem('access_token');
+    console.log(access_token);
+
+    const socket = io({
+      auth: {
+        token: access_token
+      }
     });
+    socket.on('notify', (result) => {
+      console.log('Result is', result);
+      if(result === STATUS.SUCCESS) {
+        Swal.fire({
+          icon: 'success',
+          title: '搶購成功',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        // 搶購成功後，導向結帳頁面
+        setTimeout(() => {
+          window.location.href = '/checkout.html';
+        }, 1500);
+      }
+      if (result === STATUS.STANDBY) {
+        Swal.fire({
+          icon: 'success',
+          title: '候補中',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+      if (result === STATUS.FAIL) {
+        Swal.fire({
+          icon: 'info',
+          title: '搶購失敗',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        // 搶購失敗後，導向首頁
+        setTimeout(() => {
+          window.location.href = '/home.html';
+        }, 1500);
+      }
+    });
+    socket.on('connect_error', () => {
+      console.error('connect error')
+    })
   </script>
 </body>
 </html>
