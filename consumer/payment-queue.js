@@ -104,12 +104,12 @@ const checkPayment = async (io) => {
 
                 const standbyStatus = await Queue.getStatus(standbyUserId);
                 console.debug(`User-${standbyUserId} 排到了`); // 候補使用者搶購成功
+                // 通知使用者搶購成功
+                io.to(Number(standbyUserId)).emit('notify', STATUS.SUCCESS);
                 if (Number(standbyStatus) !== STATUS.STANDBY) {
                     console.warn('This standby user is incorrect');
                     return;
                 }
-                // 通知使用者搶購成功
-                io.to(userId).emit('notify', STATUS.SUCCESS);
                 await Queue.setStatus(standbyUserId, STATUS.SUCCESS); // 更新使用者狀態為搶購成功
                 await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, standbyUserId, TIME_LIMIT);
                 console.debug('Send success user to waiting queue');
