@@ -1,7 +1,7 @@
 require('dotenv').config();
 const morganBody = require('morgan-body');
-// const { API_VERSION } = process.env;
-// const miaoshaRoute = require('./route/miaosha-route');
+const { API_VERSION } = process.env;
+const userRoute = require('./route/user-route');
 
 // Express Initialization
 const express = require('express');
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
     res.redirect('/lookup.html');
 });
 // API routes
-// app.use('/api/' + API_VERSION, [miaoshaRoute]);
+app.use('/api/' + API_VERSION, [userRoute]);
 
 // Page not found
 app.use(function (req, res, next) {
