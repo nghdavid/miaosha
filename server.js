@@ -20,7 +20,7 @@ const MINUTE = process.argv[6];
 
 const timeZoneDiff = Number(TIME_ZONE_DIFF);
 const startTime = DateTime.local(Number(YEAR), Number(MONTH), Number(Date), Number(HOUR - timeZoneDiff), Number(MINUTE)).setZone('Asia/Taipei');
-const url = 'https://www.youtube.com/';
+const url = 'http://localhost:3000/miaosha.html';
 const password = 'th';
 
 const io = new Server(httpServer, {
