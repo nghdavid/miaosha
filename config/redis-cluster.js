@@ -18,12 +18,12 @@ const pubClient = new Redis.Cluster([
     },
 ]);
 
-pubClient.ready = false;
+pubClient.ready = true;
 const subClient = pubClient.duplicate();
 
 pubClient.on('ready', () => {
     pubClient.ready = true;
-    console.log('Redis is ready');
+    console.log('Redis cluster is ready');
 });
 
 pubClient.on('error', (error) => {
@@ -49,14 +49,15 @@ const clearRedis = async () => {
 
 const testRedisConnection = async () => {
     if (!pubClient.ready) {
+        console.log('Testing connection');
         pubClient.connect().catch((err) => {
             console.log(err);
-            console.log('redis connect fail');
+            console.log('redis cluster connect fail');
         });
     }
 };
 
-// setTimeout(testRedisConnection, 500);
+// setTimeout(testRedisConnection, 1000);
 // setTimeout(clearRedis, 400);
 
 module.exports = {
