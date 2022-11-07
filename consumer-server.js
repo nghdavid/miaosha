@@ -10,7 +10,7 @@ const httpServer = createServer(app);
 const { pubClient, subClient } = require('./config/redis-cluster');
 
 const { CONSUMER_PORT_TEST, CONSUMER_PORT, NODE_ENV } = process.env;
-
+const { socketAuth } = require('./util/auth');
 const port = NODE_ENV == 'test' ? CONSUMER_PORT_TEST : CONSUMER_PORT;
 
 const io = new Server(httpServer, {
@@ -24,9 +24,27 @@ const io = new Server(httpServer, {
 });
 io.adapter(createAdapter(pubClient, subClient));
 
+io.use(async (socket, next) => {
+    const token = socket.handshake.auth.token;
+    try {
+        const user = await socketAuth(token);
+        if (user instanceof Error) return next(new Error('登入錯誤！'));
+        socket.userId = user.id;
+        socket.email = user.email;
+        socket.name = user.name;
+        next();
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.join(2);
+    console.log('user id is ', socket.userId);
+    console.log('user email is ', socket.email);
+    console.log('user name is ', socket.name);
+    socket.join(socket.userId);
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
