@@ -44,6 +44,7 @@ io.on('connection', (socket) => {
     console.log('user id is ', socket.userId);
     console.log('user email is ', socket.email);
     console.log('user name is ', socket.name);
+    console.log('');
     socket.join(socket.userId);
     socket.on('disconnect', () => {
         console.log('user disconnected');
