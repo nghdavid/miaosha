@@ -3,27 +3,47 @@ const Redis = require('ioredis');
 
 const { REDIS_PORT_1, REDIS_HOST_1, REDIS_USERNAME_1, REDIS_PASSWORD_1, REDIS_PORT_2, REDIS_HOST_2, REDIS_USERNAME_2, REDIS_PASSWORD_2, STOCK } = process.env;
 
-const pubClient = new Redis.Cluster([
+const pubClient = new Redis.Cluster(
+    [
+        {
+            port: REDIS_PORT_1,
+            host: REDIS_HOST_1,
+            username: REDIS_USERNAME_1,
+            password: REDIS_PASSWORD_1,
+        },
+        {
+            port: REDIS_PORT_2,
+            host: REDIS_HOST_2,
+            username: REDIS_USERNAME_2,
+            password: REDIS_PASSWORD_2,
+        },
+    ],
     {
-        port: REDIS_PORT_1,
-        host: REDIS_HOST_1,
-        username: REDIS_USERNAME_1,
-        password: REDIS_PASSWORD_1,
-    },
-    {
-        port: REDIS_PORT_2,
-        host: REDIS_HOST_2,
-        username: REDIS_USERNAME_2,
-        password: REDIS_PASSWORD_2,
-    },
-]);
+        enableReadyCheck: true,
+        clusterRetryStrategy: function () {
+            const delay = 5;
+            return delay;
+        },
+        maxRetriesPerRequest: 1,
+        showFriendlyErrorStack: true,
+    }
+);
 
-pubClient.ready = true;
+pubClient.ready = false;
 const subClient = pubClient.duplicate();
 
 pubClient.on('ready', () => {
-    pubClient.ready = true;
-    console.log('Redis cluster is ready');
+    if (!pubClient.ready) {
+        console.log('Redis cluster is ready');
+        pubClient.ready = true;
+        // ! Remember to comment out these codes in production
+        pubClient.flushall();
+        console.warn('Cleaning Redis!!!');
+        console.warn('Setting stock!!!');
+        pubClient.set('stock', STOCK);
+        console.warn('Setting transaction!!!');
+        pubClient.set('transaction', 0);
+    }
 });
 
 pubClient.on('error', (error) => {
@@ -35,18 +55,6 @@ pubClient.on('error', (error) => {
     pubClient.ready = false;
 });
 
-// ! Remember to comment out this function in production
-const clearRedis = async () => {
-    if (pubClient.ready) {
-        console.warn('Cleaning Redis!!!');
-        await pubClient.flushdb();
-        console.warn('Setting stock!!!');
-        await pubClient.set('stock', STOCK);
-        console.warn('Setting transaction!!!');
-        await pubClient.set('transaction', 0);
-    }
-};
-
 const testRedisConnection = async () => {
     if (!pubClient.ready) {
         console.log('Testing connection');
@@ -57,8 +65,7 @@ const testRedisConnection = async () => {
     }
 };
 
-// setTimeout(testRedisConnection, 1000);
-// setTimeout(clearRedis, 400);
+setTimeout(testRedisConnection, 1000);
 
 module.exports = {
     pubClient,
