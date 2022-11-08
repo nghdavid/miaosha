@@ -1,4 +1,5 @@
-const Cache = require('../config/redis');
+// const Cache = require('../config/redis');
+const Cache = require('../config/redis-cluster').pubClient;
 const CACHE_USER_KEY = 'id:';
 const CACHE_STOCK_KEY = 'stock';
 const CACHE_TRANSACTION_KEY = 'transaction';
