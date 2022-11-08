@@ -43,6 +43,11 @@ pubClient.on('ready', () => {
         pubClient.set('stock', STOCK);
         console.warn('Setting transaction!!!');
         pubClient.set('transaction', 0);
+        // ! You should set price and product_id outside
+        console.warn('Setting price!!!');
+        pubClient.set('price', 100);
+        console.warn('Setting product id!!!');
+        pubClient.set('product_id', 1);
     }
 });
 
