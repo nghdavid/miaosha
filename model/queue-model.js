@@ -5,7 +5,8 @@ const CACHE_STOCK_KEY = 'stock';
 const CACHE_TRANSACTION_KEY = 'transaction';
 const CACHE_STANDBY_KEY = 'standby';
 const CACHE_SUCCESS_KEY = 'success_pay';
-
+const CACHE_PRICE_KEY = 'price';
+const CACHE_PRODUCT_ID_KEY = 'product_id';
 /**
  * * This function get user status from cache
  * * User key is like id:1 (if id = 1)
@@ -48,6 +49,45 @@ const setStatus = async (id, status) => {
     }
 };
 
+/**
+ * * This function gets product price
+ *
+ */
+const getPrice = async () => {
+    try {
+        if (Cache.ready) {
+            const price = await Cache.get(CACHE_PRICE_KEY);
+            return price;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in getPrice model');
+        console.error(err);
+        return { error: 'Redis Error: getPrice model' };
+    }
+};
+
+/**
+ * * This function gets product id
+ *
+ */
+const getProductId = async () => {
+    try {
+        if (Cache.ready) {
+            const productId = await Cache.get(CACHE_PRODUCT_ID_KEY);
+            return productId;
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in getProductId model');
+        console.error(err);
+        return { error: 'Redis Error: getProductId model' };
+    }
+};
+
+// CACHE_PRODUCT_ID_KEY;
 /**
  * * This function add 'stock' (+=1) in cache
  */
@@ -209,7 +249,9 @@ module.exports = {
     setStatus,
     enqueue,
     dequeue,
+    getPrice,
     getStandbyList,
     addSuccessPayment,
     deleteStandby,
+    getProductId,
 };
