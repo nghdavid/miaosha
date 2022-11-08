@@ -1,5 +1,6 @@
 require('dotenv').config();
 const amqplib = require('amqplib');
+const jwt = require('jsonwebtoken');
 const Queue = require('../model/queue-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
@@ -14,7 +15,7 @@ const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
 const QUEUE_NAME = 'waiting';
 
-const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD } = process.env;
+const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, PAY_TOKEN_SECRET, PAY_TOKEN_EXPIRE } = process.env;
 
 const STATUS = {
     FAIL: -1,
@@ -50,6 +51,9 @@ const consumer = async (io) => {
     const q = await channel.assertQueue('', { exclusive: true });
     console.info(`Waiting for messages in queue: ${q.queue}`);
     channel.bindQueue(q.queue, EXCHANGE_NAME, ''); //第三個是routing key
+
+    const price = await Queue.getPrice();
+    const productId = await Queue.getProductId();
     channel.consume(
         q.queue,
         async (msg) => {
@@ -97,6 +101,27 @@ const consumer = async (io) => {
                     return;
                 }
                 // 通知使用者搶購成功
+                const sockets = await io.in(userId).fetchSockets();
+                console.debug('Num of people in room is', sockets.length);
+                if (sockets.length > 0) {
+                    const accessToken = jwt.sign(
+                        {
+                            id: userId,
+                            name: sockets[0].name,
+                            email: sockets[0].email,
+                            price,
+                            productId,
+                        },
+                        PAY_TOKEN_SECRET,
+                        { expiresIn: PAY_TOKEN_EXPIRE }
+                    );
+                    console.log('name is', sockets[0].name);
+                    console.log('email is', sockets[0].email);
+                    console.log('price is', price);
+                    console.log('product id is', productId);
+                    // 給使用者結帳jwt
+                    io.to(userId).emit('jwt', accessToken);
+                }
                 io.to(userId).emit('notify', STATUS.SUCCESS);
                 await Queue.setStatus(userId, STATUS.SUCCESS);
                 console.debug('搶購成功');
