@@ -24,7 +24,7 @@ const pubClient = new Redis.Cluster(
             const delay = 5;
             return delay;
         },
-        maxRetriesPerRequest: 1,
+        maxRetriesPerRequest: 10,
         showFriendlyErrorStack: true,
     }
 );
