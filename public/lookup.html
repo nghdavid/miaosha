@@ -18,12 +18,15 @@
     };
     console.log('I am lookup page!');
     const access_token = window.localStorage.getItem('access_token');
-    console.log(access_token);
 
     const socket = io({
       auth: {
         token: access_token
       }
+    });
+    socket.on('jwt', (jwt) =>{
+      console.log('jwt', jwt);
+      window.localStorage.setItem('pay_token', jwt); // Save token
     });
     socket.on('notify', (result) => {
       console.log('Result is', result);
@@ -35,9 +38,9 @@
           timer: 1500,
         });
         // 搶購成功後，導向結帳頁面
-        setTimeout(() => {
-          window.location.href = '/checkout.html';
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.href = '/checkout.html';
+        // }, 1500);
       }
       if (result === STATUS.STANDBY) {
         Swal.fire({
