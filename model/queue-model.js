@@ -7,6 +7,7 @@ const CACHE_STANDBY_KEY = 'standby';
 const CACHE_SUCCESS_KEY = 'success_pay';
 const CACHE_PRICE_KEY = 'price';
 const CACHE_PRODUCT_ID_KEY = 'product_id';
+const CACHE_SUCCESS_TIME_KEY = 'success_time';
 /**
  * * This function get user status from cache
  * * User key is like id:1 (if id = 1)
@@ -241,6 +242,44 @@ const addSuccessPayment = async () => {
     }
 };
 
+/**
+ * @param {*} id - user id
+ * @param {*} time - when user succeed (sec)
+ *
+ * * This function saves when user succeed
+ *
+ */
+const saveSuccessTime = async (id, time) => {
+    try {
+        const result = await Cache.hsetnx(CACHE_SUCCESS_TIME_KEY, `${CACHE_USER_KEY}${id}`, time);
+        // 檢查是否已經存過這個使用者的issue time
+        if (!result) {
+            console.warn(`User ${id} field already exist in ${CACHE_SUCCESS_TIME_KEY}`);
+        }
+    } catch (err) {
+        console.error('Error happen in saveJwtTime model');
+        console.error(err);
+        return { error: 'DB Error: saveJwtTime model' };
+    }
+};
+
+/**
+ * @param {*} id - user id
+ *
+ * * This function return when user succeed (sec)
+ *
+ */
+const getSuccessTime = async (id) => {
+    try {
+        const time = await Cache.hget(CACHE_SUCCESS_TIME_KEY, `${CACHE_USER_KEY}${id}`);
+        return time;
+    } catch (err) {
+        console.error('Error happen in saveJwtTime model');
+        console.error(err);
+        return { error: 'DB Error: saveJwtTime model' };
+    }
+};
+
 module.exports = {
     getStatus,
     addStock,
@@ -254,4 +293,6 @@ module.exports = {
     addSuccessPayment,
     deleteStandby,
     getProductId,
+    saveSuccessTime,
+    getSuccessTime,
 };

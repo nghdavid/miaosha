@@ -1,5 +1,6 @@
 require('dotenv').config();
 const amqplib = require('amqplib');
+const { issuePayJWT } = require('../util/auth');
 const { STATUS } = require('../util/status');
 const Queue = require('../model/queue-model');
 const MessageQueueService = require('../config/rabbitmq');
@@ -42,6 +43,8 @@ const checkPayment = async (io) => {
     const q = await channel.assertQueue('', { exclusive: true });
     console.info(`Waiting for messages in queue: ${q.queue}`);
     channel.bindQueue(q.queue, EXCHANGE_NAME, ''); //第三個是routing key
+    const price = await Queue.getPrice();
+    const productId = await Queue.getProductId();
     channel.consume(
         q.queue,
         async (msg) => {
@@ -99,12 +102,25 @@ const checkPayment = async (io) => {
                 const standbyStatus = await Queue.getStatus(standbyUserId);
                 console.debug(`User-${standbyUserId} 排到了`); // 候補使用者搶購成功
                 // 通知使用者搶購成功
+                const sockets = await io.in(Number(standbyUserId)).fetchSockets();
+                if (sockets.length > 0) {
+                    const accessToken = issuePayJWT({
+                        id: userId,
+                        name: sockets[0].name,
+                        email: sockets[0].email,
+                        price,
+                        productId,
+                    });
+                    // 給使用者結帳jwt
+                    io.to(Number(standbyUserId)).emit('jwt', accessToken);
+                }
                 io.to(Number(standbyUserId)).emit('notify', STATUS.SUCCESS);
                 if (Number(standbyStatus) !== STATUS.STANDBY) {
                     console.warn('This standby user is incorrect');
                     return;
                 }
                 await Queue.setStatus(standbyUserId, STATUS.SUCCESS); // 更新使用者狀態為搶購成功
+                await Queue.saveSuccessTime(standbyUserId, Math.round(Date.now() / 1000)); // 記錄使用者何時搶購成功
                 await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, standbyUserId, TIME_LIMIT);
                 console.debug('Send success user to waiting queue');
             } else {

@@ -105,17 +105,19 @@ const consumer = async (io) => {
                         price,
                         productId,
                     });
-                    console.log('name is', sockets[0].name);
-                    console.log('email is', sockets[0].email);
-                    console.log('price is', price);
-                    console.log('product id is', productId);
+                    console.debug('name is', sockets[0].name);
+                    console.debug('email is', sockets[0].email);
+                    console.debug('price is', price);
+                    console.debug('product id is', productId);
                     // 給使用者結帳jwt
                     io.to(userId).emit('jwt', accessToken);
                 }
+
                 io.to(userId).emit('notify', STATUS.SUCCESS);
                 await Queue.setStatus(userId, STATUS.SUCCESS);
                 console.debug('搶購成功');
                 console.debug('現在庫存剩', stock, '個');
+                await Queue.saveSuccessTime(userId, Math.round(Date.now() / 1000)); // 記錄使用者何時搶購成功
                 await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, msg.content, TIME_LIMIT);
                 console.debug('Send success user to waiting queue');
             } else {
