@@ -34,7 +34,6 @@ const miaosha = async (req, res, next) => {
     if (people >= MAX_PEOPLE) {
         isFull = 1;
         MessageQueue.closeChannel();
-        MessageQueue.closeConnection();
     }
     return res.status(200).json({ message: '秒殺請求已送出' });
 };

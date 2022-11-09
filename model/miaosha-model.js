@@ -1,4 +1,5 @@
-const Cache = require('../config/redis');
+// const Cache = require('../config/redis');
+const Cache = require('../config/redis-cluster').pubClient;
 const CACHE_PEOPLE_KEY = 'people';
 
 /**
