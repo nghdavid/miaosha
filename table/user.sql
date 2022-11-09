@@ -10,4 +10,4 @@ CREATE TABLE user (
   name varchar(20) NOT NULL,
   role_id boolean NOT NULL default 0,
   primary key (id)
-)
+);
