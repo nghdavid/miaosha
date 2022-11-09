@@ -1,5 +1,6 @@
 require('dotenv').config();
 const amqplib = require('amqplib');
+const { STATUS } = require('../util/status');
 const Queue = require('../model/queue-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
@@ -13,13 +14,6 @@ const CACHE_STANDBY_KEY = 'standby';
 const QUEUE_NAME = 'waiting';
 
 const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD } = process.env;
-
-const STATUS = {
-    FAIL: -1,
-    STANDBY: 0,
-    SUCCESS: 1,
-    PAID: 2,
-};
 
 // Connect to RabbitMQ
 (async () => {

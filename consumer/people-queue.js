@@ -1,6 +1,7 @@
 require('dotenv').config();
 const amqplib = require('amqplib');
-const jwt = require('jsonwebtoken');
+const { issuePayJWT } = require('../util/auth');
+const { STATUS } = require('../util/status');
 const Queue = require('../model/queue-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
@@ -15,14 +16,7 @@ const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
 const QUEUE_NAME = 'waiting';
 
-const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, PAY_TOKEN_SECRET, PAY_TOKEN_EXPIRE } = process.env;
-
-const STATUS = {
-    FAIL: -1,
-    STANDBY: 0,
-    SUCCESS: 1,
-    PAID: 2,
-};
+const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD } = process.env;
 
 // Connect to RabbitMQ
 (async () => {
@@ -104,17 +98,13 @@ const consumer = async (io) => {
                 const sockets = await io.in(userId).fetchSockets();
                 console.debug('Num of people in room is', sockets.length);
                 if (sockets.length > 0) {
-                    const accessToken = jwt.sign(
-                        {
-                            id: userId,
-                            name: sockets[0].name,
-                            email: sockets[0].email,
-                            price,
-                            productId,
-                        },
-                        PAY_TOKEN_SECRET,
-                        { expiresIn: PAY_TOKEN_EXPIRE }
-                    );
+                    const accessToken = issuePayJWT({
+                        id: userId,
+                        name: sockets[0].name,
+                        email: sockets[0].email,
+                        price,
+                        productId,
+                    });
                     console.log('name is', sockets[0].name);
                     console.log('email is', sockets[0].email);
                     console.log('price is', price);

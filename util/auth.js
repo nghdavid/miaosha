@@ -1,7 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
-const { TOKEN_SECRET } = process.env;
+const { TOKEN_SECRET, PAY_TOKEN_EXPIRE } = process.env;
 
 async function socketAuth(accessToken) {
     accessToken = accessToken.replace('Bearer ', '');
@@ -18,6 +18,17 @@ async function socketAuth(accessToken) {
     }
 }
 
+/**
+ * @param {*} id - User id
+ * This function creates JWT token for payment
+ * The payload includes user id and name and email and product id and price
+ */
+function issuePayJWT(payload) {
+    const accessToken = jwt.sign(payload, TOKEN_SECRET, { expiresIn: PAY_TOKEN_EXPIRE });
+    return accessToken;
+}
+
 module.exports = {
     socketAuth,
+    issuePayJWT,
 };
