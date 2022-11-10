@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="css/lookup.css" type="text/css" rel="stylesheet">
   <title>查詢</title>
 </head>
 <body>
-  <h1>查詢頁面</h1>
+  <!-- <h1>查詢頁面</h1> -->
+  <div id="load">
+    <div>中</div>
+    <div>果</div>
+    <div>結</div>
+    <div>詢</div>
+    <div>查</div>
+  </div>
   <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"
     integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
     crossorigin="anonymous"></script>
   <script src='//cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+  <script src="js/header.js"></script>
   <script>
     const STATUS = {
       FAIL: -1,
@@ -16,38 +25,37 @@
       SUCCESS: 1,
       PAID: 2,
     };
-    console.log('I am lookup page!');
     const access_token = window.localStorage.getItem('access_token');
 
-    const socket = io({
+    const socket = io(CONSUMER_DNS, {
       auth: {
         token: access_token
       }
     });
-    socket.on('jwt', (jwt) =>{
-      console.log('jwt', jwt);
+    socket.on('jwt', (jwt) => {
+      // console.log('jwt', jwt);
       window.localStorage.setItem('pay_token', jwt); // Save token
     });
     socket.on('notify', (result) => {
       console.log('Result is', result);
-      if(result === STATUS.SUCCESS) {
+      if (result === STATUS.SUCCESS) {
         Swal.fire({
           icon: 'success',
           title: '搶購成功',
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2000,
         });
         // 搶購成功後，導向結帳頁面
-        // setTimeout(() => {
-        //   window.location.href = '/checkout.html';
-        // }, 1500);
+        setTimeout(() => {
+          window.location.href = `${DNS}/checkout.html`;
+        }, 2500);
       }
       if (result === STATUS.STANDBY) {
         Swal.fire({
           icon: 'success',
           title: '候補中',
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2500,
         });
       }
       if (result === STATUS.FAIL) {
@@ -55,12 +63,12 @@
           icon: 'info',
           title: '搶購失敗',
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2000,
         });
-        // 搶購失敗後，導向首頁
-        setTimeout(() => {
-          window.location.href = '/home.html';
-        }, 1500);
+        // 搶購失敗後，導向失敗頁面
+          setTimeout(() => {
+            window.location.href = `${DNS}/failure.html`;
+          }, 2500);
       }
     });
     socket.on('connect_error', () => {
