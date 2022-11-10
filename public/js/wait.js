@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io(PUBLISHER_DNS);
 socket.on('url', (url, password) => {
     console.log(url);
     window.location.href = `${url}?hl=${password}`;
