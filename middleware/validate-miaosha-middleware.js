@@ -1,5 +1,5 @@
 const validator = require('validator');
-const answers = { 1: 'a', 2: 'a', 3: 'a', 4: 'a', 5: 'a' };
+const answers = { 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E' };
 const ActivityClass = require('../util/activity');
 const Activity = new ActivityClass();
 
