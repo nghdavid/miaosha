@@ -4,13 +4,69 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <!-- <link rel='stylesheet' type='text/css' href='css/style.css'> -->
+  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css' rel='stylesheet'
+    integrity='sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi' crossorigin='anonymous'>
+  <!-- <link rel='stylesheet' type='text/css' href='css/miaosha.css'> -->
   <title>秒殺</title>
 </head>
 <body>
   <main>
-    <h1>搶購頁面</h1>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-6 text-center mt-5">
+          <h1>搶購頁面</h1>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-6 mt-5">
+          <h3>要答對問題，才能進行搶購喔</h3>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-6 mt-5">
+          <h4>&#9679 請問PS5是哪間公司出的?</h4>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-6">
+          <ul style="list-style: none;">
+            <li>(A) Sony</li>
+            <li>(B) MicroSoft</li>
+            <li>(C) Samsung</li>
+            <li>(D) Amazon</li>
+            <li>(E) Appworks</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-6">
+          <h5>請在下方答案框輸入答案</h5>
+          <small id="emailHelp" class="form-text text-danger">請輸入半形大寫英文</small>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-3 text-center mt-2">
+          <form>
+            <div class="form-group">
+              <!-- <label for="exampleInputEmail1">Answer</label> -->
+              <input type="text" class="form-control" id="answer" aria-describedby="emailHelp"
+                placeholder="">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-6 text-center mt-2">
+          <button id="buy" type="button" class="btn btn-primary">搶購</button>
+        </div>
+      </div>
+    </div>
   </main>
-  <!-- <script src='js/script.js'></script> -->
+  <script src='https://code.jquery.com/jquery-3.6.1.min.js' integrity='sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=' crossorigin='anonymous'></script>
+  <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+  <script src='//cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+  <script src="js/header.js"></script>
+  <script src='js/miaosha.js'></script>
 </body>
 </html>
