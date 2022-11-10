@@ -17,10 +17,7 @@ async function register(body) {
       },
       body: JSON.stringify(body),
     };
-    const response = await fetch(
-      `/api/${apiVersion}/user/signup`,
-      param
-    );
+    const response = await fetch(`${GENERAL_DNS}/api/${apiVersion}/user/signup`, param);
     const result = await response.json();
 
     if (result.error) {
@@ -30,6 +27,7 @@ async function register(body) {
       });
     } else {
       window.localStorage.setItem('access_token', result.data.access_token); // Save token
+      window.localStorage.setItem('user_id', result.data.user.id); // Save user id
 
       Swal.fire({
         icon: 'success',
@@ -39,7 +37,7 @@ async function register(body) {
       });
       // 登入成功後，導向profile page
       setTimeout(() => {
-        window.location.href = '/lookup.html';
+        window.location.href = `${DNS}/wait-miaosha.html`;
       }, 1600);
     }
   } catch (err) {
@@ -93,29 +91,27 @@ async function login(body) {
       },
       body: JSON.stringify(body),
     };
-    const response = await fetch(
-      `/api/${apiVersion}/user/signin`,
-      param
-    );
+    const response = await fetch(`${GENERAL_DNS}/api/${apiVersion}/user/signin`, param);
     const result = await response.json();
 
     if (result.error) {
-      Swal.fire({
-        icon: 'info',
-        text: `${result.error}`,
-      });
+        Swal.fire({
+            icon: 'info',
+            text: `${result.error}`,
+        });
     } else {
-      window.localStorage.setItem('access_token', result.data.access_token); // Save token
-      Swal.fire({
-        icon: 'success',
-        title: 'Login successfully',
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      // 若登入成功，就導向profile page
-      setTimeout(() => {
-        window.location.href = '/lookup.html';
-      }, 1600);
+        window.localStorage.setItem('access_token', result.data.access_token); // Save token
+        window.localStorage.setItem('user_id', result.data.user.id); // Save user id
+        Swal.fire({
+            icon: 'success',
+            title: 'Login successfully',
+            showConfirmButton: false,
+            timer: 2000,
+        });
+        // 若登入成功，就導向profile page
+        setTimeout(() => {
+            window.location.href = `${DNS}/wait-miaosha.html`;
+        }, 1600);
     }
   } catch (err) {
     console.error(err);
