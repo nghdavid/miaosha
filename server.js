@@ -10,7 +10,7 @@ const Activity = new ActivityClass();
 const { PORT_TEST, PORT, NODE_ENV } = process.env;
 const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
 
-const url = 'http://localhost:3000/miaosha.html';
+const url = 'http://localhost:4000/miaosha.html';
 const password = 'th';
 
 const io = new Server(httpServer, {
