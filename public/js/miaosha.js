@@ -1,3 +1,15 @@
+if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token')) {
+    Swal.fire({
+        icon: 'info',
+        title: '請先登入或註冊',
+        showConfirmButton: false,
+        timer: 1200,
+    });
+    setTimeout(() => {
+        window.location.href = `${DNS}/member.html`;
+    }, 1600);
+}
+
 const question = 1;
 const id = Number(window.localStorage.getItem('user_id'));
 
