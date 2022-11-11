@@ -1,4 +1,4 @@
-if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token')) {
+if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token') === null) {
     Swal.fire({
         icon: 'info',
         title: '請先登入或註冊',
