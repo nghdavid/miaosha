@@ -14,7 +14,7 @@ const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
 const QUEUE_NAME = 'waiting';
 
-const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD } = process.env;
+const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, PROTOCOL } = process.env;
 
 // Connect to RabbitMQ
 (async () => {
@@ -28,7 +28,7 @@ const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWOR
 
 const checkPayment = async (io) => {
     const connection = await amqplib.connect({
-        protocol: 'amqp',
+        protocol: PROTOCOL,
         hostname: RABBIT_HOST,
         port: RABBIT_PORT,
         username: RABBIT_USER,
