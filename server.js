@@ -7,10 +7,10 @@ const httpServer = createServer(app);
 const ActivityClass = require('./util/activity');
 const Activity = new ActivityClass();
 
-const { PORT_TEST, PORT, NODE_ENV } = process.env;
+const { PORT_TEST, PORT, NODE_ENV, DNS } = process.env;
 const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
 
-const url = 'http://localhost:4000/miaosha.html';
+const url = `${DNS}/miaosha.html`;
 const password = 'th';
 
 const io = new Server(httpServer, {
