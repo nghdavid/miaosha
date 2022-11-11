@@ -1,8 +1,12 @@
 const serverIP = 'localhost';
 const apiVersion = '1.0';
 const ip = window.location.host;
-const PUBLISHER_DNS = 'http://localhost:3000';
-const CONSUMER_DNS = 'http://localhost:4000';
-const DNS = 'http://localhost:4000';
-const GENERAL_DNS = 'http://localhost:4000';
+// const PUBLISHER_DNS = 'http://localhost:3000';
+const PUBLISHER_DNS = 'https://publisher.miaosha.click';
+// const CONSUMER_DNS = 'http://localhost:4000';
+const CONSUMER_DNS = 'https://consumer.miaosha.click';
+// const DNS = 'http://localhost:4000';
+const DNS = 'https://consumer.miaosha.click';
+// const GENERAL_DNS = 'http://localhost:4000';
+const GENERAL_DNS = 'https://consumer.miaosha.click';
 // const DNS = 'https://miaosha/';
