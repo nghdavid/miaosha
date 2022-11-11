@@ -17,7 +17,7 @@ socket.on('notify', (result) => {
     if (result === STATUS.FAIL) {
         Swal.fire({
             icon: 'info',
-            title: '搶購失敗',
+            title: '逾時未付款，搶購失敗',
             showConfirmButton: false,
             timer: 2000,
         });
