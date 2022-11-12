@@ -37,7 +37,7 @@ const io = new Server(httpServer, {
         // 等到有CDN時，在將origin轉成array形式，並加入CDN的域名
         // origin: ['https://stylish-test.click'],
         origin: '*',
-        credentials: true,
+        // credentials: true,
     },
 });
 io.adapter(createAdapter(pubClient, subClient));
