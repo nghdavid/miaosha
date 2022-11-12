@@ -9,7 +9,7 @@ if (window.localStorage.getItem('user_id') === null || window.localStorage.getIt
         window.location.href = `${DNS}/member.html`;
     }, 1600);
 }
-const socket = io(PUBLISHER_DNS);
+const socket = io(PUBLISHER_DNS, { transports: ['websocket'] });
 socket.on('url', (url, password) => {
     console.log(url);
     window.location.href = `${url}?hl=${password}`;
