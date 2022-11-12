@@ -1,9 +1,11 @@
 require('dotenv').config();
 const process = require('process');
 const { createServer } = require('http');
+const { createAdapter } = require('@socket.io/redis-adapter');
 const { Server } = require('socket.io');
 const app = require('./app');
 const httpServer = createServer(app);
+const { pubClient, subClient } = require('./config/redis-cluster');
 const ActivityClass = require('./util/activity');
 const Activity = new ActivityClass();
 
@@ -22,6 +24,7 @@ const io = new Server(httpServer, {
         credentials: true,
     },
 });
+io.adapter(createAdapter(pubClient, subClient));
 
 function informUser() {
     // console.log('Waiting');
