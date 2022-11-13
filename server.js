@@ -6,6 +6,7 @@ const { Server } = require('socket.io');
 const app = require('./app');
 const httpServer = createServer(app);
 const { pubClient, subClient } = require('./config/redis-cluster');
+const Cache = require('./config/redis-cluster').pubClient;
 const ActivityClass = require('./util/activity');
 const Activity = new ActivityClass();
 
@@ -27,14 +28,6 @@ const io = new Server(httpServer, {
 });
 io.adapter(createAdapter(pubClient, subClient));
 
-function informUser() {
-    // console.log('Waiting');
-    if (Activity.isStart()) {
-        // console.log('Start!');
-        io.emit('url', url, password);
-    }
-}
-
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.emit('time', Activity.year, Activity.month, Activity.date, Activity.hour, Activity.minute);
@@ -46,4 +39,16 @@ io.on('connection', (socket) => {
 httpServer.listen(port, () => {
     console.log(`Server is listening on port ${port}...`);
 });
-setInterval(informUser, 50);
+
+Cache.on('ready', async () => {
+    await Activity.setTime();
+    setInterval(informUser, 50);
+});
+
+function informUser() {
+    // console.log('Waiting');
+    if (Activity.isStart()) {
+        // console.log('Start!');
+        io.emit('url', url, password);
+    }
+}

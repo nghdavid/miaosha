@@ -1,7 +1,12 @@
 const validator = require('validator');
+const Cache = require('../config/redis-cluster').pubClient;
 const answers = { 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E' };
 const ActivityClass = require('../util/activity');
 const Activity = new ActivityClass();
+
+Cache.on('ready', async () => {
+    await Activity.setTime();
+});
 
 const validateMiaosha = async (req, res, next) => {
     if (!Activity.isStart()) {
