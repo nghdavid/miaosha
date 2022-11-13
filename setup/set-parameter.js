@@ -8,25 +8,25 @@ const DATE = Number(process.argv[5]);
 const HOUR = Number(process.argv[6]);
 const MINUTE = Number(process.argv[7]);
 
-Cache.on('ready', () => {
-    Cache.flushall();
+Cache.on('ready', async () => {
+    await Cache.flushall();
     console.warn('Cleaning Redis!!!');
     console.info('Setting stock!!!');
-    Cache.set('stock', STOCK);
+    await Cache.set('stock', STOCK);
     console.info('Setting transaction!!!');
-    Cache.set('transaction', 0);
+    await Cache.set('transaction', 0);
     console.info('Setting price!!!');
-    Cache.set('price', 100);
+    await Cache.set('price', 100);
     console.info('Setting product id!!!');
-    Cache.set('product_id', 1);
+    await Cache.set('product_id', 1);
     console.info('Setting consumer!!!');
-    Cache.set('num_consumer', NUM_CONSUMER);
-    Cache.sadd('consumers', [...Array(NUM_CONSUMER).keys()]);
+    await Cache.set('num_consumer', NUM_CONSUMER);
+    await Cache.sadd('consumers', [...Array(NUM_CONSUMER).keys()]);
     console.info('Setting starting time!!!');
-    Cache.set('year', YEAR);
-    Cache.set('month', MONTH);
-    Cache.set('date', DATE);
-    Cache.set('hour', HOUR);
-    Cache.set('minute', MINUTE);
+    await Cache.set('year', YEAR);
+    await Cache.set('month', MONTH);
+    await Cache.set('date', DATE);
+    await Cache.set('hour', HOUR);
+    await Cache.set('minute', MINUTE);
     process.exit(0);
 });
