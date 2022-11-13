@@ -10,6 +10,7 @@ const socket = io(CONSUMER_DNS, {
     auth: {
         token: access_token,
     },
+    transports: ['websocket'],
 });
 
 socket.on('notify', (result) => {
