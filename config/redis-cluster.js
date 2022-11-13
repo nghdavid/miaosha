@@ -37,17 +37,17 @@ pubClient.on('ready', () => {
         console.log('Redis cluster is ready');
         pubClient.ready = true;
         // ! Remember to comment out these codes in production
-        pubClient.flushall();
-        console.warn('Cleaning Redis!!!');
-        console.warn('Setting stock!!!');
-        pubClient.set('stock', STOCK);
-        console.warn('Setting transaction!!!');
-        pubClient.set('transaction', 0);
+        // pubClient.flushall();
+        // console.warn('Cleaning Redis!!!');
+        // console.warn('Setting stock!!!');
+        // pubClient.set('stock', STOCK);
+        // console.warn('Setting transaction!!!');
+        // pubClient.set('transaction', 0);
         // ! You should set price and product_id outside
-        console.warn('Setting price!!!');
-        pubClient.set('price', 100);
-        console.warn('Setting product id!!!');
-        pubClient.set('product_id', 1);
+        // console.warn('Setting price!!!');
+        // pubClient.set('price', 100);
+        // console.warn('Setting product id!!!');
+        // pubClient.set('product_id', 1);
     }
 });
 

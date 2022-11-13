@@ -3,13 +3,9 @@ const amqplib = require('amqplib');
 const { issuePayJWT } = require('../util/auth');
 const { STATUS } = require('../util/status');
 const Queue = require('../model/queue-model');
+const Parameter = require('../model/parameter-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
-
-const CONSUMER_QUANTITY = Number(process.argv[2]);
-const CONSUMER_NUM = Number(process.argv[3]);
-console.debug(`Consumer有${CONSUMER_QUANTITY}個`);
-console.debug(`這是${CONSUMER_NUM + 1}號Consumer`);
 
 const EXCHANGE_NAME = 'people_queue';
 const EXCHANGE_PAY_NAME = 'check_payment';
@@ -48,6 +44,10 @@ const consumer = async (io) => {
 
     const price = await Queue.getPrice();
     const productId = await Queue.getProductId();
+    const CONSUMER_QUANTITY = await Parameter.getNumConsumer();
+    const CONSUMER_NUM = await Parameter.getConsumer();
+    console.debug(`Consumer有${CONSUMER_QUANTITY}個`);
+    console.debug(`這是${CONSUMER_NUM + 1}號Consumer`);
     channel.consume(
         q.queue,
         async (msg) => {

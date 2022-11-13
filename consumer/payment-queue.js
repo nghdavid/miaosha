@@ -3,11 +3,9 @@ const amqplib = require('amqplib');
 const { issuePayJWT } = require('../util/auth');
 const { STATUS } = require('../util/status');
 const Queue = require('../model/queue-model');
+const Parameter = require('../model/parameter-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
-
-const CONSUMER_QUANTITY = Number(process.argv[2]);
-const CONSUMER_NUM = Number(process.argv[3]);
 
 const EXCHANGE_NAME = 'check_payment';
 const EXCHANGE_PAY_NAME = 'check_payment';
@@ -45,6 +43,8 @@ const checkPayment = async (io) => {
     channel.bindQueue(q.queue, EXCHANGE_NAME, ''); //第三個是routing key
     const price = await Queue.getPrice();
     const productId = await Queue.getProductId();
+    const CONSUMER_QUANTITY = await Parameter.getNumConsumer();
+    const CONSUMER_NUM = await Parameter.getConsumer();
     channel.consume(
         q.queue,
         async (msg) => {
