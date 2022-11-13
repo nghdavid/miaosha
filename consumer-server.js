@@ -48,8 +48,8 @@ io.use(async (socket, next) => {
         const user = await socketAuth(token);
         if (user instanceof Error) return next(new Error('登入錯誤！'));
         socket.userId = user.id;
-        socket.email = user.email;
-        socket.name = user.name;
+        socket.data.email = user.email;
+        socket.data.name = user.name;
         next();
     } catch (err) {
         console.error(err);

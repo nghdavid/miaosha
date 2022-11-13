@@ -100,13 +100,13 @@ const consumer = async (io) => {
                 if (sockets.length > 0) {
                     const accessToken = issuePayJWT({
                         id: userId,
-                        name: sockets[0].name,
-                        email: sockets[0].email,
+                        name: sockets[0].data.name,
+                        email: sockets[0].data.email,
                         price,
                         productId,
                     });
-                    console.debug('name is', sockets[0].name);
-                    console.debug('email is', sockets[0].email);
+                    console.debug('name is', sockets[0].data.name);
+                    console.debug('email is', sockets[0].data.email);
                     console.debug('price is', price);
                     console.debug('product id is', productId);
                     // 給使用者結帳jwt

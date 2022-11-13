@@ -106,8 +106,8 @@ const checkPayment = async (io) => {
                 if (sockets.length > 0) {
                     const accessToken = issuePayJWT({
                         id: userId,
-                        name: sockets[0].name,
-                        email: sockets[0].email,
+                        name: sockets[0].data.name,
+                        email: sockets[0].data.email,
                         price,
                         productId,
                     });
