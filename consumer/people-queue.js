@@ -118,7 +118,7 @@ const consumer = async (io) => {
                 console.debug('搶購成功');
                 console.debug('現在庫存剩', stock, '個');
                 await Queue.saveSuccessTime(userId, Math.round(Date.now() / 1000)); // 記錄使用者何時搶購成功
-                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, msg.content, TIME_LIMIT);
+                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, msg.content, Number(TIME_LIMIT));
                 console.debug('Send success user to waiting queue');
             } else {
                 console.warn('Receive nothing!');
