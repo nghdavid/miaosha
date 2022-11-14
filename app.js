@@ -19,9 +19,9 @@ morganBody(app, { logResponseBody: false });
 // CORS allow all
 app.use(cors());
 
-// app.get('/', (req, res) => {
-//     res.redirect('/main.html');
-// });
+app.get('/api/health', (req, res) => {
+    res.sendStatus(200);
+});
 
 // API routes
 app.use('/api/' + API_VERSION, [miaoshaRoute]);

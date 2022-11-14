@@ -19,9 +19,9 @@ morganBody(app, { logResponseBody: false });
 // CORS allow all
 app.use(cors());
 
-// app.get('/', (req, res) => {
-//     res.status(200).redirect('/lookup.html');
-// });
+app.get('/api/health', (req, res) => {
+    res.sendStatus(200);
+});
 
 // API routes
 app.use('/api/' + API_VERSION, [userRoute]);
