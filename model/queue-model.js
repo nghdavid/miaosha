@@ -58,7 +58,7 @@ const getPrice = async () => {
     try {
         if (Cache.ready) {
             const price = await Cache.get(CACHE_PRICE_KEY);
-            return price;
+            return Number(price);
         } else {
             throw new Error('Redis Disconnect');
         }
@@ -77,7 +77,7 @@ const getProductId = async () => {
     try {
         if (Cache.ready) {
             const productId = await Cache.get(CACHE_PRODUCT_ID_KEY);
-            return productId;
+            return Number(productId);
         } else {
             throw new Error('Redis Disconnect');
         }
