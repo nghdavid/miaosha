@@ -122,7 +122,7 @@ const checkPayment = async (io) => {
                 }
                 await Queue.setStatus(standbyUserId, STATUS.SUCCESS); // 更新使用者狀態為搶購成功
                 await Queue.saveSuccessTime(standbyUserId, Math.round(Date.now() / 1000)); // 記錄使用者何時搶購成功
-                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, standbyUserId, TIME_LIMIT);
+                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, standbyUserId, Number(TIME_LIMIT));
                 console.debug('Send success user to waiting queue');
             } else {
                 console.warn('Receive nothing!');
