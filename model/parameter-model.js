@@ -7,6 +7,7 @@ const CACHE_HOUR_KEY = 'hour';
 const CACHE_MINUTE_KEY = 'minute';
 const CACHE_NUM_CONSUMER_KEY = 'num_consumer';
 const CACHE_CONSUMERS_KEY = 'consumers';
+const CACHE_PAY_CONSUMERS_KEY = 'pay_consumers';
 
 /**
  * * This function gets start time (year)
@@ -141,10 +142,30 @@ const getConsumer = async () => {
     }
 };
 
+/**
+ * * This function gets pay consumer num from redis set (pay_consumers)
+ * * 取得這個pay consumer屬於幾號機
+ */
+const getPayConsumer = async () => {
+    try {
+        if (Cache.ready) {
+            const consumer = await Cache.spop(CACHE_PAY_CONSUMERS_KEY);
+            return Number(consumer);
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in getPayConsumer model');
+        console.error(err);
+        return { error: 'Redis Error: getPayConsumer model' };
+    }
+};
+
 module.exports = {
     getYear,
     getMonth,
     getConsumer,
+    getPayConsumer,
     getNumConsumer,
     getMinute,
     getDate,

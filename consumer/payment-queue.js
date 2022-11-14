@@ -44,7 +44,8 @@ const checkPayment = async (io) => {
     const price = await Queue.getPrice();
     const productId = await Queue.getProductId();
     const CONSUMER_QUANTITY = await Parameter.getNumConsumer();
-    const CONSUMER_NUM = await Parameter.getConsumer();
+    const CONSUMER_NUM = await Parameter.getPayConsumer();
+    console.debug(`這是${CONSUMER_NUM + 1}號 Pay Consumer`);
     channel.consume(
         q.queue,
         async (msg) => {

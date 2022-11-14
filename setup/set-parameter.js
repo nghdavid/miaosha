@@ -22,6 +22,7 @@ Cache.on('ready', async () => {
     console.info('Setting consumer!!!');
     await Cache.set('num_consumer', NUM_CONSUMER);
     await Cache.sadd('consumers', [...Array(NUM_CONSUMER).keys()]);
+    await Cache.sadd('pay_consumers', [...Array(NUM_CONSUMER).keys()]);
     console.info('Setting starting time!!!');
     await Cache.set('year', YEAR);
     await Cache.set('month', MONTH);
