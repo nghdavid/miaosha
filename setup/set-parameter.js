@@ -9,7 +9,9 @@ const HOUR = Number(process.argv[6]);
 const MINUTE = Number(process.argv[7]);
 
 Cache.on('ready', async () => {
-    await Cache.flushall();
+    // Send `FLUSHDB` command to all masters:
+    const masters = Cache.nodes('master');
+    await Promise.all(masters.map((node) => node.flushdb()));
     console.warn('Cleaning Redis!!!');
     console.info('Setting stock!!!');
     await Cache.set('stock', STOCK);
