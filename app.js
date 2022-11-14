@@ -7,6 +7,9 @@ const miaoshaRoute = require('./route/miaosha-route');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+app.get('/api/health', (req, res) => {
+    res.sendStatus(200);
+});
 
 app.set('trust proxy', true);
 app.set('json spaces', 2);
@@ -19,9 +22,6 @@ morganBody(app, { logResponseBody: false });
 // CORS allow all
 app.use(cors());
 
-app.get('/api/health', (req, res) => {
-    res.sendStatus(200);
-});
 
 // API routes
 app.use('/api/' + API_VERSION, [miaoshaRoute]);
