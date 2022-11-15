@@ -95,24 +95,24 @@ const consumer = async (io) => {
                     return;
                 }
                 // 通知使用者搶購成功
-                const sockets = await io.in(userId).fetchSockets();
-                console.debug('Num of people in room is', sockets.length);
-                if (sockets.length > 0) {
-                    const accessToken = issuePayJWT({
-                        id: userId,
-                        name: sockets[0].data.name,
-                        email: sockets[0].data.email,
-                        price,
-                        productId,
-                    });
-                    console.debug('name is', sockets[0].data.name);
-                    console.debug('email is', sockets[0].data.email);
-                    console.debug('price is', price);
-                    console.debug('product id is', productId);
-                    // 給使用者結帳jwt
-                    console.info(`給使用者${userId} JWT`);
-                    io.to(userId).emit('jwt', accessToken);
-                }
+                // const sockets = await io.in(userId).fetchSockets();
+                // console.debug('Num of people in room is', sockets.length);
+                // if (sockets.length > 0) {
+                const accessToken = issuePayJWT({
+                    id: userId,
+                    // name: sockets[0].data.name,
+                    // email: sockets[0].data.email,
+                    price,
+                    productId,
+                });
+                // console.debug('name is', sockets[0].data.name);
+                // console.debug('email is', sockets[0].data.email);
+                console.debug('price is', price);
+                console.debug('product id is', productId);
+                // 給使用者結帳jwt
+                console.info(`給使用者${userId} JWT`);
+                io.to(userId).emit('jwt', accessToken);
+                // }
 
                 io.to(userId).emit('notify', STATUS.SUCCESS);
                 await Queue.setStatus(userId, STATUS.SUCCESS);

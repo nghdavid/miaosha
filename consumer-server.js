@@ -70,8 +70,8 @@ io.on('connection', async (socket) => {
                 console.debug(`來詢問的使用者${socket.data.userId}有搶購成功喔`);
                 const accessToken = issuePayJWT({
                     id: socket.data.userId,
-                    name: socket.data.name,
-                    email: socket.data.email,
+                    // name: socket.data.name,
+                    // email: socket.data.email,
                     price,
                     productId,
                 });

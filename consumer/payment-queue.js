@@ -104,20 +104,20 @@ const checkPayment = async (io) => {
                 const standbyStatus = await Queue.getStatus(standbyUserId);
                 console.debug(`User-${standbyUserId} 候補到了`); // 候補使用者搶購成功
                 // 通知使用者搶購成功
-                const sockets = await io.in(Number(standbyUserId)).fetchSockets();
-                console.debug('Num of people in room is', sockets.length);
-                if (sockets.length > 0) {
-                    const accessToken = issuePayJWT({
-                        id: userId,
-                        name: sockets[0].data.name,
-                        email: sockets[0].data.email,
-                        price,
-                        productId,
-                    });
-                    // 給使用者結帳jwt
-                    console.info(`給候補者${standbyUserId} JWT`);
-                    io.to(Number(standbyUserId)).emit('jwt', accessToken);
-                }
+                // const sockets = await io.in(Number(standbyUserId)).fetchSockets();
+                // console.debug('Num of people in room is', sockets.length);
+                // if (sockets.length > 0) {
+                const accessToken = issuePayJWT({
+                    id: userId,
+                    // name: sockets[0].data.name,
+                    // email: sockets[0].data.email,
+                    price,
+                    productId,
+                });
+                // 給使用者結帳jwt
+                console.info(`給候補者${standbyUserId} JWT`);
+                io.to(Number(standbyUserId)).emit('jwt', accessToken);
+                // }
                 io.to(Number(standbyUserId)).emit('notify', STATUS.SUCCESS);
                 if (Number(standbyStatus) !== STATUS.STANDBY) {
                     console.warn('This standby user is incorrect');
