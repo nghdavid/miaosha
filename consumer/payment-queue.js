@@ -50,6 +50,7 @@ const checkPayment = async (io) => {
         q.queue,
         async (msg) => {
             console.debug('');
+            console.debug('Payment queue 處理中....');
             console.debug('檢查有無付款了喔');
             if (msg.content) {
                 const userId = Number(msg.content);
@@ -101,9 +102,10 @@ const checkPayment = async (io) => {
                 }
 
                 const standbyStatus = await Queue.getStatus(standbyUserId);
-                console.debug(`User-${standbyUserId} 排到了`); // 候補使用者搶購成功
+                console.debug(`User-${standbyUserId} 候補到了`); // 候補使用者搶購成功
                 // 通知使用者搶購成功
                 const sockets = await io.in(Number(standbyUserId)).fetchSockets();
+                console.debug('Num of people in room is', sockets.length);
                 if (sockets.length > 0) {
                     const accessToken = issuePayJWT({
                         id: userId,
@@ -113,6 +115,7 @@ const checkPayment = async (io) => {
                         productId,
                     });
                     // 給使用者結帳jwt
+                    console.info(`給候補者${standbyUserId} JWT`);
                     io.to(Number(standbyUserId)).emit('jwt', accessToken);
                 }
                 io.to(Number(standbyUserId)).emit('notify', STATUS.SUCCESS);

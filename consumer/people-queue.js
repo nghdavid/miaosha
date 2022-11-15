@@ -52,7 +52,7 @@ const consumer = async (io) => {
         q.queue,
         async (msg) => {
             console.debug('');
-            console.debug('Receive Message! Processing....');
+            console.debug('People queue 處理中....');
             if (msg.content) {
                 const userId = Number(msg.content);
                 if (userId % CONSUMER_QUANTITY !== CONSUMER_NUM) {
@@ -110,6 +110,7 @@ const consumer = async (io) => {
                     console.debug('price is', price);
                     console.debug('product id is', productId);
                     // 給使用者結帳jwt
+                    console.info(`給使用者${userId} JWT`);
                     io.to(userId).emit('jwt', accessToken);
                 }
 
