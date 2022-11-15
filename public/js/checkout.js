@@ -16,6 +16,7 @@ const socket = io(CONSUMER_DNS, {
 socket.on('notify', (result) => {
     console.log('Result is', result);
     if (result === STATUS.FAIL) {
+        window.localStorage.removeItem('pay_token'); // 如果使用者逾時未付款，將pay_token移除掉
         Swal.fire({
             icon: 'info',
             title: '逾時未付款，搶購失敗',
