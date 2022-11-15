@@ -12,6 +12,7 @@ if (window.localStorage.getItem('user_id') === null || window.localStorage.getIt
 }
 const STATUS = {
     FAIL: -1,
+    STANDBY: 0,
     SUCCESS: 1,
     PAID: 2,
 };
