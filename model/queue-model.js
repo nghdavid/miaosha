@@ -200,9 +200,9 @@ const getStandbyList = async () => {
             throw new Error('Redis Disconnect');
         }
     } catch (err) {
-        console.error('Error happen in getTransaction model');
+        console.error('Error happen in getStandbyList model');
         console.error(err);
-        return { error: 'Redis Error: getTransaction model' };
+        return { error: 'Redis Error: getStandbyList model' };
     }
 };
 
@@ -218,9 +218,9 @@ const deleteStandby = async () => {
             throw new Error('Redis Disconnect');
         }
     } catch (err) {
-        console.error('Error happen in getTransaction model');
+        console.error('Error happen in deleteStandby model');
         console.error(err);
-        return { error: 'Redis Error: getTransaction model' };
+        return { error: 'Redis Error: deleteStandby model' };
     }
 };
 
