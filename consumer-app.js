@@ -24,7 +24,7 @@ morganBody(app, { logResponseBody: false });
 app.use(cors());
 
 // API routes
-app.use('/api/' + API_VERSION, [userRoute, orderRoute]);
+// app.use('/api/' + API_VERSION, [userRoute, orderRoute]);
 
 // Page not found
 app.use(function (req, res, next) {
