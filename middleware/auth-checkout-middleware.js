@@ -17,9 +17,7 @@ const authCheckout = async (req, res, next) => {
         const payload = await promisify(jwt.verify)(token, PAY_TOKEN_SECRET);
         req.userId = payload.id;
         req.price = payload.price;
-        req.produceId = payload.productId;
-        req.name = payload.name;
-        req.email = payload.email;
+        req.productId = payload.productId;
         next();
     } catch (err) {
         return res.status(401).send({ error: '付款期限已到' });
