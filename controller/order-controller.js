@@ -9,10 +9,10 @@ const checkout = async (req, res, next) => {
     const { userId, price, productId } = req;
     const { phone, address } = req.body;
     const status = await Queue.getStatus(userId);
-    if (status === STATUS.PAID) {
+    if (Number(status) === STATUS.PAID) {
         return res.status(400).json({ error: '你已經買過了' });
     }
-    if (status !== STATUS.SUCCESS) {
+    if (Number(status) !== STATUS.SUCCESS) {
         return res.status(400).json({ error: '你沒有購買資格' });
     }
     const userData = await Order.getUserData(userId); // { name: 'david', email: 'test1@test.com' }
