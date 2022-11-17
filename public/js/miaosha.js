@@ -1,3 +1,4 @@
+window.localStorage.removeItem('pay_token');
 if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token') === null) {
     Swal.fire({
         icon: 'info',
