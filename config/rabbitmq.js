@@ -38,9 +38,11 @@ class MessageQueueService {
         });
     }
 
-    async publishToExchange(exchangeName, msg) {
+    async publishToExchange(exchangeName, queueName, msg) {
         // Use Fanout mode (exchange)
         await this.channel.assertExchange(exchangeName, 'fanout', { durable: false });
+        const queue = await this.channel.assertQueue(queueName, { durable: true });
+        this.channel.bindQueue(queue.queue, exchangeName, ''); //第三個是routing key
         this.channel.publish(exchangeName, '', Buffer.from(msg));
     }
 
