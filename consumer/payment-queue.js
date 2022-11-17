@@ -3,16 +3,15 @@ const amqplib = require('amqplib');
 const { issuePayJWT } = require('../util/auth');
 const { STATUS } = require('../util/status');
 const Queue = require('../model/queue-model');
-const Parameter = require('../model/parameter-model');
 const MessageQueueService = require('../config/rabbitmq');
 const PaymentQueue = new MessageQueueService('payment');
 
 const EXCHANGE_NAME = 'check_payment';
 const EXCHANGE_PAY_NAME = 'check_payment';
 const CACHE_STANDBY_KEY = 'standby';
-const QUEUE_NAME = 'waiting';
-
-const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, PROTOCOL } = process.env;
+const STANDBY_QUEUE_NAME = 'waiting';
+const PAY_QUEUE_NAME = 'check_payment';
+const { TIME_LIMIT, STOCK } = process.env;
 
 // Connect to RabbitMQ
 (async () => {
@@ -25,44 +24,28 @@ const { TIME_LIMIT, STOCK, RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWOR
 })();
 
 const checkPayment = async (io) => {
-    const connection = await amqplib.connect({
-        protocol: PROTOCOL,
-        hostname: RABBIT_HOST,
-        port: RABBIT_PORT,
-        username: RABBIT_USER,
-        password: RABBIT_PASSWORD,
-        locale: 'en_US',
-        frameMax: 0,
-        heartbeat: 0,
-        vhost: '/',
-    });
+    const connection = await amqplib.connect(PaymentQueue.connectParam);
     const channel = await connection.createChannel();
     await channel.assertExchange(EXCHANGE_NAME, 'fanout', { durable: false });
-    const q = await channel.assertQueue('', { exclusive: true });
-    console.info(`Waiting for messages in queue: ${q.queue}`);
-    channel.bindQueue(q.queue, EXCHANGE_NAME, ''); //第三個是routing key
+    const payQueue = await channel.assertQueue(PAY_QUEUE_NAME, { durable: true });
+    console.info(`Waiting for messages in queue: ${PAY_QUEUE_NAME}`);
+    channel.bindQueue(payQueue.queue, EXCHANGE_NAME, ''); //第三個是routing key
     const price = await Queue.getPrice();
     const productId = await Queue.getProductId();
-    const CONSUMER_QUANTITY = await Parameter.getNumConsumer();
-    const CONSUMER_NUM = await Parameter.getPayConsumer();
-    console.debug(`這是${CONSUMER_NUM + 1}號 Pay Consumer`);
     channel.consume(
-        q.queue,
+        PAY_QUEUE_NAME,
         async (msg) => {
             console.debug('');
             console.debug('Payment queue 處理中....');
             console.debug('檢查有無付款了喔');
             if (msg.content) {
                 const userId = Number(msg.content);
-                if (userId % CONSUMER_QUANTITY !== CONSUMER_NUM) {
-                    console.debug(`我不負責user ${userId}`);
-                    return;
-                }
                 console.debug('The user id is: ', userId);
                 const status = await Queue.getStatus(userId);
                 // 確認redis有無錯誤
                 if (status !== null && status.error) {
                     console.error('payment checker has error');
+                    channel.nack(msg); // 把msg送回consumer再次requeue
                     throw new Error('Cannot access cache!!!');
                 }
 
@@ -86,11 +69,11 @@ const checkPayment = async (io) => {
                         }
                         console.warn('庫存已全部賣完!!!!!!');
                     }
+                    channel.ack(msg);
                     return;
                 }
 
                 console.debug(`User-${userId} 忘記付款了`);
-                // ? 尚不確定沒有付款的使用者要不要通知失敗
                 io.to(userId).emit('notify', STATUS.FAIL);
                 await Queue.setStatus(userId, STATUS.FAIL); // 將逾時未付款者的狀態為更新為失敗
                 // 候補使用者搶購成功
@@ -98,44 +81,40 @@ const checkPayment = async (io) => {
                 if (standbyUserId === null) {
                     Queue.addStock(); // 回補庫存
                     console.info('已經無人在候補');
+                    channel.ack(msg);
                     return;
                 }
 
                 const standbyStatus = await Queue.getStatus(standbyUserId);
                 console.debug(`User-${standbyUserId} 候補到了`); // 候補使用者搶購成功
                 // 通知使用者搶購成功
-                // const sockets = await io.in(Number(standbyUserId)).fetchSockets();
-                // console.debug('Num of people in room is', sockets.length);
-                // if (sockets.length > 0) {
                 const accessToken = issuePayJWT({
                     id: userId,
-                    // name: sockets[0].data.name,
-                    // email: sockets[0].data.email,
                     price,
                     productId,
                 });
                 // 給使用者結帳jwt
                 console.info(`給候補者${standbyUserId} JWT`);
                 io.to(Number(standbyUserId)).emit('jwt', accessToken);
-                // }
                 io.to(Number(standbyUserId)).emit('notify', STATUS.SUCCESS);
                 if (Number(standbyStatus) !== STATUS.STANDBY) {
                     console.warn('This standby user is incorrect');
+                    channel.ack(msg);
                     return;
                 }
                 await Queue.setStatus(standbyUserId, STATUS.SUCCESS); // 更新使用者狀態為搶購成功
                 await Queue.saveSuccessTime(standbyUserId, Math.round(Date.now() / 1000)); // 記錄使用者何時搶購成功
-                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, QUEUE_NAME, standbyUserId, Number(TIME_LIMIT));
+                await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, STANDBY_QUEUE_NAME, standbyUserId, Number(TIME_LIMIT));
                 console.debug('Send success user to waiting queue');
             } else {
                 console.warn('Receive nothing!');
             }
+            channel.ack(msg);
         },
-        { noAck: true }
+        { noAck: false }
     );
 };
 
-// checkPayment();
 module.exports = {
     checkPayment,
 };
