@@ -24,7 +24,10 @@ const socket = io(CONSUMER_DNS, {
     },
     transports: ['websocket'],
 });
-socket.emit('lookup');
+
+socket.on('connect', () => {
+    socket.emit('lookup');
+});
 
 socket.on('jwt', (jwt) => {
     // console.log('jwt', jwt);
@@ -45,8 +48,8 @@ socket.on('notify', (result) => {
                 window.location.href = `${DNS}/checkout.html`;
             }, 2500);
         } else {
-          console.error('雖然使用者有收到成功的通知');
-          console.error('但使用者沒有拿到token');
+            console.error('雖然使用者有收到成功的通知');
+            console.error('但使用者沒有拿到token');
         }
     }
     if (result === STATUS.STANDBY) {
