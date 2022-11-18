@@ -24,6 +24,8 @@ const socket = io(CONSUMER_DNS, {
     },
     transports: ['websocket'],
 });
+socket.emit('lookup');
+
 socket.on('jwt', (jwt) => {
     // console.log('jwt', jwt);
     window.localStorage.setItem('pay_token', jwt); // Save token
