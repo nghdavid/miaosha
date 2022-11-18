@@ -13,29 +13,66 @@
   <title>等待秒殺</title>
 </head>
 <body>
-  <main>
-    <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-8 text-center">
-          <h1>秒殺即將開始</h1>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary p-3">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="https://miaosha.click/wait-miaosha.html">
+          <!-- <img src="./image/logo.png" alt="" width="100" height="100"
+            class="d-inline-block align-text-top"> -->
+          <h1>MIAOSHA</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item ml-3">
+              <a class="nav-link" href="https://miaosha.click/member.html">登入</a>
+            </li>
+            <li class="nav-item ml-3">
+              <a class="nav-link" href="#">戰利品</a>
+            </li>
+          </ul>
         </div>
       </div>
-      <div class="row justify-content-center">
-        <div class="col-8 text-center">
-          <div id="timer">
-            <!-- <span id="days"></span>days -->
+    </nav>
+  </header>
+  <main>
+    <div class="p-5 bg-info text-white text-center rounded">
+      <h1>整點搶秒殺爆品</h1>
+    </div>
+    <div class="container">
+      <div class="row justify-content-center mt-5">
+        <div class="col-4">
+          <img src="image/product.jpg" alt="product" width="400" height="400">
+        </div>
+        <div class="col-4 mt-5">
+          <h1>PS5</h1>
+          <h3 class="text-decoration-line-through">13000</ㄘ>
+            <h3>下殺1折 <span class="fw-bolder fs-1">只要 $1000</span></h3>
+            <h5>限量: 1000組</h5>
+            <h3 class="border border-primary border-3 rounded-pill p-3 mt-3 text-center">9點準時開搶</h3>
+            <!-- <div id="timer">
             <span id="hours"></span>hours
             <span id="minutes"></span>minutes
             <span id="seconds"></span>seconds
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
   </main>
+  <footer class="bg-primary py-3">
+    <!-- Copyright -->
+    <!-- <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+      © 2022 Copyright </div> -->
+    <h3 class="text-white text-center">© 2022 Miaosha. All Rights Reserved.</h3>
+    <!-- Copyright -->
+  </footer>
   <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
   <script src='//cdn.jsdelivr.net/npm/sweetalert2@11'></script>
   <script src="js/header.js"></script>
-  <script src='js/wait.js'></script>
+  <!-- <script src='js/wait.js'></script> -->
 </body>
 </html>
