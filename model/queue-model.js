@@ -58,7 +58,7 @@ const getPrice = async () => {
     try {
         if (Cache.ready) {
             const price = await Cache.get(CACHE_PRICE_KEY);
-            return price;
+            return Number(price);
         } else {
             throw new Error('Redis Disconnect');
         }
@@ -77,7 +77,7 @@ const getProductId = async () => {
     try {
         if (Cache.ready) {
             const productId = await Cache.get(CACHE_PRODUCT_ID_KEY);
-            return productId;
+            return Number(productId);
         } else {
             throw new Error('Redis Disconnect');
         }
@@ -200,9 +200,9 @@ const getStandbyList = async () => {
             throw new Error('Redis Disconnect');
         }
     } catch (err) {
-        console.error('Error happen in getTransaction model');
+        console.error('Error happen in getStandbyList model');
         console.error(err);
-        return { error: 'Redis Error: getTransaction model' };
+        return { error: 'Redis Error: getStandbyList model' };
     }
 };
 
@@ -218,9 +218,9 @@ const deleteStandby = async () => {
             throw new Error('Redis Disconnect');
         }
     } catch (err) {
-        console.error('Error happen in getTransaction model');
+        console.error('Error happen in deleteStandby model');
         console.error(err);
-        return { error: 'Redis Error: getTransaction model' };
+        return { error: 'Redis Error: deleteStandby model' };
     }
 };
 

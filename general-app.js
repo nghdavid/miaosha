@@ -1,7 +1,8 @@
 require('dotenv').config();
 const morganBody = require('morgan-body');
-const { API_VERSION } = process.env;
-const miaoshaRoute = require('./route/miaosha-route');
+const { API_VERSION, GENERAL_PORT } = process.env;
+const userRoute = require('./route/user-route');
+const orderRoute = require('./route/order-route');
 
 // Express Initialization
 const express = require('express');
@@ -22,9 +23,8 @@ morganBody(app, { logResponseBody: false });
 // CORS allow all
 app.use(cors());
 
-
 // API routes
-app.use('/api/' + API_VERSION, [miaoshaRoute]);
+app.use('/api/' + API_VERSION, [userRoute, orderRoute]);
 
 // Page not found
 app.use(function (req, res, next) {
@@ -38,4 +38,7 @@ app.use((err, req, res, next) => {
     res.status(status).json({ error: 'Internal Server Error' });
 });
 
+app.listen(GENERAL_PORT, async () => {
+    console.log(`Server is listening on port: ${GENERAL_PORT}`);
+});
 module.exports = app;

@@ -1,11 +1,11 @@
 require('dotenv').config();
 const amqp = require('amqplib');
-const { RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD } = process.env;
+const { RABBIT_HOST, RABBIT_PORT, RABBIT_USER, RABBIT_PASSWORD, PROTOCOL } = process.env;
 class MessageQueueService {
     constructor(name) {
         this.name = name;
         this.connectParam = {
-            protocol: 'amqp',
+            protocol: PROTOCOL,
             hostname: RABBIT_HOST,
             port: RABBIT_PORT,
             username: RABBIT_USER,
@@ -38,9 +38,11 @@ class MessageQueueService {
         });
     }
 
-    async publishToExchange(exchangeName, msg) {
+    async publishToExchange(exchangeName, queueName, msg) {
         // Use Fanout mode (exchange)
         await this.channel.assertExchange(exchangeName, 'fanout', { durable: false });
+        const queue = await this.channel.assertQueue(queueName, { durable: true });
+        this.channel.bindQueue(queue.queue, exchangeName, ''); //第三個是routing key
         this.channel.publish(exchangeName, '', Buffer.from(msg));
     }
 

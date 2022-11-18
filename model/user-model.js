@@ -1,6 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
-const db = require('../config/mysql');
+const { db, readDb } = require('../config/mysql');
 const salt = parseInt(process.env.BCRYPT_SALT);
 const { TOKEN_EXPIRE, TOKEN_SECRET } = process.env; // 30 days by seconds
 const jwt = require('jsonwebtoken');
@@ -79,7 +79,7 @@ const nativeSignIn = async (email, password) => {
 
 const getUserDetail = async (email, roleId) => {
     try {
-        const [users] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
+        const [users] = await readDb.query('SELECT * FROM user WHERE email = ?', [email]);
         return users[0];
     } catch (e) {
         return null;

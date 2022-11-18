@@ -16,7 +16,7 @@ const MessageQueue = new MessageQueueService('people');
 
 let isFull = 0; //排隊隊伍是否過長
 const EXCHANGE_NAME = 'people_queue';
-
+const QUEUE_NAME = 'people_queue';
 // Miaosha controller
 const miaosha = async (req, res, next) => {
     const { userId } = req;
@@ -30,7 +30,7 @@ const miaosha = async (req, res, next) => {
         return;
     }
     console.info('The number of people in line is ', people);
-    await MessageQueue.publishToExchange(EXCHANGE_NAME, userId.toString());
+    await MessageQueue.publishToExchange(EXCHANGE_NAME, QUEUE_NAME, userId.toString());
     if (people >= MAX_PEOPLE) {
         isFull = 1;
         MessageQueue.closeChannel();
