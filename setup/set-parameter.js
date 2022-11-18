@@ -1,12 +1,12 @@
 const Cache = require('../config/redis-cluster').pubClient;
 const { STOCK } = process.env;
 
-const NUM_CONSUMER = Number(process.argv[2]);
-const YEAR = Number(process.argv[3]);
-const MONTH = Number(process.argv[4]);
-const DATE = Number(process.argv[5]);
-const HOUR = Number(process.argv[6]);
-const MINUTE = Number(process.argv[7]);
+// const NUM_CONSUMER = Number(process.argv[2]);
+const YEAR = Number(process.argv[2]);
+const MONTH = Number(process.argv[3]);
+const DATE = Number(process.argv[4]);
+const HOUR = Number(process.argv[5]);
+const MINUTE = Number(process.argv[6]);
 
 Cache.on('ready', async () => {
     // Send `FLUSHDB` command to all masters:
@@ -21,10 +21,10 @@ Cache.on('ready', async () => {
     await Cache.set('price', 100);
     console.info('Setting product id!!!');
     await Cache.set('product_id', 1);
-    console.info('Setting consumer!!!');
-    await Cache.set('num_consumer', NUM_CONSUMER);
-    await Cache.sadd('consumers', [...Array(NUM_CONSUMER).keys()]);
-    await Cache.sadd('pay_consumers', [...Array(NUM_CONSUMER).keys()]);
+    // console.info('Setting consumer!!!');
+    // await Cache.set('num_consumer', NUM_CONSUMER);
+    // await Cache.sadd('consumers', [...Array(NUM_CONSUMER).keys()]);
+    // await Cache.sadd('pay_consumers', [...Array(NUM_CONSUMER).keys()]);
     console.info('Setting starting time!!!');
     await Cache.set('year', YEAR);
     await Cache.set('month', MONTH);
