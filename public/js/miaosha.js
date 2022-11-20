@@ -11,7 +11,6 @@ if (window.localStorage.getItem('user_id') === null || window.localStorage.getIt
     }, 1600);
 }
 
-const question = 1;
 const id = Number(window.localStorage.getItem('user_id'));
 
 $('#buy').click(async () => {

@@ -10,12 +10,7 @@ if (window.localStorage.getItem('user_id') === null || window.localStorage.getIt
         window.location.href = `${DNS}/member.html`;
     }, 1600);
 }
-const STATUS = {
-    FAIL: -1,
-    STANDBY: 0,
-    SUCCESS: 1,
-    PAID: 2,
-};
+
 const access_token = window.localStorage.getItem('access_token');
 
 const socket = io(CONSUMER_DNS, {
