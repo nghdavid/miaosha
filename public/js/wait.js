@@ -1,15 +1,30 @@
-// if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token') === null) {
-//     Swal.fire({
-//         icon: 'info',
-//         title: '請先登入或註冊',
-//         showConfirmButton: false,
-//         timer: 1200,
-//     });
-//     setTimeout(() => {
-//         window.location.href = `${DNS}/member.html`;
-//     }, 1600);
-// }
+if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token') === null) {
+    Swal.fire({
+        icon: 'info',
+        title: '請先登入或註冊',
+        showConfirmButton: false,
+        timer: 1200,
+    });
+    setTimeout(() => {
+        window.location.href = `${DNS}/member.html`;
+    }, 1600);
+}
 const socket = io(PUBLISHER_DNS, { transports: ['websocket'] });
+socket.on('connect', () => {
+    $('#backup').hide();
+    $('#timer').show();
+});
+socket.on('connect_error', () => {
+    Swal.fire({
+        icon: 'info',
+        title: '搶購活動尚未開始',
+        showConfirmButton: false,
+        timer: 2000,
+    });
+    setTimeout(() => {
+        window.location.href = `${DNS}/main.html`;
+    }, 2000);
+});
 socket.on('url', (url, password) => {
     console.log(url);
     window.location.href = `${url}?hl=${password}`;
