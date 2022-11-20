@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,8 +8,22 @@
   <!-- <link rel='stylesheet' type='text/css' href='css/style.css'> -->
   <title>搶購失敗</title>
 </head>
-<body>
-  <main>
+<body class="d-flex flex-column h-100">
+  <header class="container-fluid pt-3 border-bottom border-2">
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3">
+      <a href="./main.html" class="d-flex align-items-center text-dark text-decoration-none mx-3">
+        <img src="./image/logo.png" alt="" width="80" height="80" class="d-inline-block align-text-top mx-3">
+        <span class="fs-4">MIAOSHA</span>
+      </a>
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto mx-5">
+        <a class="me-3 py-2 text-dark text-decoration-none" href="./member.html">登入</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="./prize.html">戰利品</a>
+        <!-- <a class="me-3 py-2 text-dark text-decoration-none" href="#">Member</a> -->
+        <!-- <a class="py-2 text-dark text-decoration-none" href="#">Pricing</a> -->
+      </nav>
+    </div>
+  </header>
+  <main class="flex-shrink-0">
     <div class="container">
       <div class="row justify-content-center mt-5">
         <div class="col-6 text-center mt-5">
@@ -19,6 +33,11 @@
       </div>
     </div>
   </main>
+  <footer class="footer mt-auto py-3 bg-light text-center">
+    <div class="container">
+      <span class="text-muted">© 2022 Miaosha. All Rights Reserved.</span>
+    </div>
+  </footer>
   <!-- <script src='js/script.js'></script> -->
 </body>
 </html>
