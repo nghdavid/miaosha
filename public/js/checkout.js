@@ -1,5 +1,15 @@
-const access_token = window.localStorage.getItem('access_token');
+// 檢查是否有pay_token，若無則跳出通知，並轉去主頁
+if (!window.localStorage.getItem('pay_token')) {
+    Swal.fire({
+        icon: 'info',
+        text: `您沒有購買資格`,
+    });
+    setTimeout(() => {
+        window.location.href = `${DNS}/main.html`;
+    }, 1600);
+}
 
+const access_token = window.localStorage.getItem('access_token');
 const socket = io(CONSUMER_DNS, {
     auth: {
         token: access_token,
@@ -32,6 +42,7 @@ $('form').on('submit', function (event) {
 
     const phone = $('#phone').val();
     const address = $('#address').val();
+
     // fix keyboard issue in iOS device
     forceBlurIos();
 
@@ -51,59 +62,45 @@ $('form').on('submit', function (event) {
             return;
         }
         // Fetch post request to backend server
-        const accessToken = window.localStorage.getItem('access_token');
-        // 檢查是否有token，若無則跳出通知，並轉去登入頁面
-        // if (!accessToken) {
-        //     Swal.fire({
-        //         icon: 'info',
-        //         text: `Please log in first!`,
-        //     });
-        //     setTimeout(() => {
-        //         window.location.href = '/member.html';
-        //     }, 1600);
-        //     return;
-        // }
+        const payToken = window.localStorage.getItem('pay_token');
 
         // Post request to Checkout api
         const url = `${GENERAL_DNS}/api/${apiVersion}/order/checkout`;
         // Checkout api request body
-        // const body = {
-        //     prime: result.card.prime,
-        //     order,
-        // };
-        // const res = await fetch(url, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         Authorization: `Bearer ${accessToken}`,
-        //     },
-        //     body: JSON.stringify(body),
-        // });
+        const body = {
+            prime: result.card.prime,
+            phone,
+            address,
+        };
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${payToken}`,
+            },
+            body: JSON.stringify(body),
+        });
 
-        // const orderData = await res.json();
+        const orderData = await res.json();
         // 處理回傳結果
-        // if (orderData.error && orderData.error.message) {
-        //     Swal.fire({
-        //         icon: 'info',
-        //         text: `${orderData.error.message}`,
-        //     });
-        // } else if (orderData.error) {
-        //     Swal.fire({
-        //         icon: 'info',
-        //         text: `${orderData.error}`,
-        //     });
-        // } else {
-        //     Swal.fire({
-        //         icon: 'success',
-        //         title: 'Success!',
-        //         text: `Order Num ${orderData.data.number}`,
-        //     });
-        //     // 成功購買後會將order number存入local storage
-        //     window.localStorage.setItem('order_number', orderData.data.number);
-        //     // 成功購買後會導向thank you page
-        //     setTimeout(() => {
-        //         window.location.href = '/thankyou.html';
-        //     }, 3600);
-        // }
+        if (orderData.error) {
+            Swal.fire({
+                icon: 'info',
+                text: `${orderData.error}`,
+            });
+            setTimeout(() => {
+                window.location.href = `${DNS}/main.html`;
+            }, 3600);
+        } else {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: `${orderData.message}`,
+            });
+            // 成功購買後會導向戰利品頁
+            setTimeout(() => {
+                window.location.href = `${DNS}/prize.html`;
+            }, 3600);
+        }
     });
 });
