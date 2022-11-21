@@ -19,7 +19,7 @@ CREATE TABLE orders (
 CREATE TABLE miaosha_orders (
 	id smallint unsigned NOT NULL UNIQUE auto_increment,
   user_id mediumint unsigned NOT NULL UNIQUE,
-  miaosha_id mediumint unsigned NOT NULL UNIQUE,
+  miaosha_id mediumint unsigned NOT NULL,
   price smallint unsigned NOT NULL,
   amount smallint unsigned DEFAULT 1,
   name varchar(20) NOT NULL,
