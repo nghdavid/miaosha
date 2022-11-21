@@ -1,3 +1,4 @@
+const lookupPeriod = 60000; // 60000ms = 1 min
 window.localStorage.removeItem('pay_token'); // 將pay_token先移除掉
 if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token') === null) {
     Swal.fire({
@@ -22,6 +23,9 @@ const socket = io(CONSUMER_DNS, {
 
 socket.on('connect', () => {
     socket.emit('lookup');
+    setInterval(() => {
+        socket.emit('lookup');
+    }, lookupPeriod);
 });
 
 socket.on('jwt', (jwt) => {
