@@ -13,6 +13,7 @@ const checkout = async (req, res, next) => {
         return res.status(400).json({ error: '你已經買過了' });
     }
     if (Number(status) !== STATUS.SUCCESS) {
+        console.warn(`User-${userId}來結帳但沒購買資格，狀態為${Number(status)}}`);
         return res.status(400).json({ error: '你沒有購買資格' });
     }
     const userData = await Order.getUserData(userId); // { name: 'david', email: 'test1@test.com' }
