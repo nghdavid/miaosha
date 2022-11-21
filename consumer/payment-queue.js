@@ -89,7 +89,7 @@ const checkPayment = async (io) => {
                 console.debug(`User-${standbyUserId} 候補到了`); // 候補使用者搶購成功
                 // 通知使用者搶購成功
                 const accessToken = issuePayJWT({
-                    id: userId,
+                    id: Number(standbyUserId),
                     price,
                     productId,
                 });
