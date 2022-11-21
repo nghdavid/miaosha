@@ -71,6 +71,18 @@ socket.on('notify', (result) => {
             window.location.href = `${DNS}/failure.html`;
         }, 2500);
     }
+    if (result === STATUS.PAID) {
+        Swal.fire({
+            icon: 'info',
+            title: '您已購買成功',
+            showConfirmButton: false,
+            timer: 2000,
+        });
+        // 如果使用者購買成功後再進行搶購，會導向戰利品頁
+        setTimeout(() => {
+            window.location.href = `${DNS}/prize.html`;
+        }, 2500);
+    }
 });
 socket.on('connect_error', () => {
     console.error('connect error');
