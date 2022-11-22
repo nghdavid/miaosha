@@ -3,6 +3,7 @@ const morganBody = require('morgan-body');
 const { API_VERSION, GENERAL_PORT } = process.env;
 const userRoute = require('./route/user-route');
 const orderRoute = require('./route/order-route');
+const productRoute = require('./route/product-route');
 
 // Express Initialization
 const express = require('express');
@@ -24,7 +25,7 @@ morganBody(app, { logResponseBody: false });
 app.use(cors());
 
 // API routes
-app.use('/api/' + API_VERSION, [userRoute, orderRoute]);
+app.use('/api/' + API_VERSION, [userRoute, orderRoute, productRoute]);
 
 // Page not found
 app.use(function (req, res, next) {
