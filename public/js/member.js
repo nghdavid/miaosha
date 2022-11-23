@@ -37,7 +37,7 @@ async function register(body) {
       });
       // 登入成功後，導向profile page
       setTimeout(() => {
-        window.location.href = `${DNS}/wait-miaosha.html`;
+        window.location.href = `${DNS}/main.html`;
       }, 1600);
     }
   } catch (err) {
@@ -110,7 +110,7 @@ async function login(body) {
         });
         // 若登入成功，就導向profile page
         setTimeout(() => {
-            window.location.href = `${DNS}/wait-miaosha.html`;
+            window.location.href = `${DNS}/main.html`;
         }, 1600);
     }
   } catch (err) {

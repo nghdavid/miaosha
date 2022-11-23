@@ -3,12 +3,15 @@ const Cache = require('../config/redis-cluster').pubClient;
 const answers = { 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E' };
 const ActivityClass = require('../util/activity');
 const Activity = new ActivityClass();
-
+global.isFull = 0;
 Cache.on('ready', async () => {
     await Activity.setTime();
 });
 
 const validateMiaosha = async (req, res, next) => {
+    if (global.isFull) {
+        return res.status(200).json({ message: '秒殺已結束' });
+    }
     if (!Activity.isStart()) {
         return res.status(400).json({ error: 'Activity has not started yet' });
     }

@@ -60,14 +60,14 @@ const checkPayment = async (io) => {
                         if (standbyList.length > 0) {
                             await Queue.deleteStandby();
                             const totalFailSets = standbyList.map((id) => {
-                                console.warn(`User-${id}搶購失敗`);
+                                console.info(`User-${id}搶購失敗`);
                                 // 通知使用者搶購失敗
                                 io.to(id).emit('notify', STATUS.FAIL);
                                 return Queue.setStatus(id, STATUS.FAIL);
                             });
                             await Promise.all(totalFailSets);
                         }
-                        console.warn('庫存已全部賣完!!!!!!');
+                        console.info('庫存已全部賣完!!!!!!');
                     }
                     channel.ack(msg);
                     return;
@@ -89,7 +89,7 @@ const checkPayment = async (io) => {
                 console.debug(`User-${standbyUserId} 候補到了`); // 候補使用者搶購成功
                 // 通知使用者搶購成功
                 const accessToken = issuePayJWT({
-                    id: userId,
+                    id: Number(standbyUserId),
                     price,
                     productId,
                 });

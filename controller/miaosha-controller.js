@@ -14,15 +14,15 @@ const MessageQueue = new MessageQueueService('people');
     }
 })();
 
-let isFull = 0; //排隊隊伍是否過長
+// let isFull = 0; //排隊隊伍是否過長
 const EXCHANGE_NAME = 'people_queue';
 const QUEUE_NAME = 'people_queue';
 // Miaosha controller
 const miaosha = async (req, res, next) => {
     const { userId } = req;
-    if (isFull) {
-        return res.status(200).json({ message: '秒殺已結束' });
-    }
+    // if (isFull) {
+    //     return res.status(200).json({ message: '秒殺已結束' });
+    // }
     const people = await Miaosha.addPeople(); //增加排隊人數
     // 確認redis有無錯誤
     if (people.error) {
@@ -32,8 +32,9 @@ const miaosha = async (req, res, next) => {
     console.info('The number of people in line is ', people);
     await MessageQueue.publishToExchange(EXCHANGE_NAME, QUEUE_NAME, userId.toString());
     if (people >= MAX_PEOPLE) {
-        isFull = 1;
-        MessageQueue.closeChannel();
+        // isFull = 1;
+        global.isFull = 1;
+        console.info('排隊人數已達上限');
     }
     return res.status(200).json({ message: '秒殺請求已送出' });
 };

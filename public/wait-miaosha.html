@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,67 +12,67 @@
     integrity='sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi' crossorigin='anonymous'>
   <title>等待秒殺</title>
 </head>
-<body>
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary p-3">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="https://miaosha.click/wait-miaosha.html">
-          <!-- <img src="./image/logo.png" alt="" width="100" height="100"
-            class="d-inline-block align-text-top"> -->
-          <h1>MIAOSHA</h1>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item ml-3">
-              <a class="nav-link" href="https://miaosha.click/member.html">登入</a>
-            </li>
-            <li class="nav-item ml-3">
-              <a class="nav-link" href="#">戰利品</a>
-            </li>
-          </ul>
+<body class="d-flex flex-column h-100">
+  <header class="container-fluid pt-3 border-bottom border-2">
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3">
+      <a href="./main.html" class="d-flex align-items-center text-dark text-decoration-none mx-3">
+        <img src="./image/logo.png" alt="" width="80" height="80" class="d-inline-block align-text-top mx-3">
+        <span class="fs-4">MIAOSHA</span>
+      </a>
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto mx-5">
+        <a class="me-3 py-2 text-dark text-decoration-none" href="./member.html">登入</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="./prize.html">戰利品</a>
+        <!-- <a class="me-3 py-2 text-dark text-decoration-none" href="#">Member</a> -->
+        <!-- <a class="py-2 text-dark text-decoration-none" href="#">Pricing</a> -->
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-shrink-0">
+    <div class="p-5">
+      <div class="container-fluid py-5">
+        <div class="row justify-content-center text-center">
+          <div class="col-8">
+            <h3 id='backup' class="py-3 display-1">Coming soon</h3>
+            <div id="timer" style='display: none;'>
+              <p class="d-inline display-4">距離特賣還有</p>
+              <span id="hours"></span>
+              <p class="d-inline display-4">時</p>
+              <span id="minutes"></span>
+              <p class="d-inline display-4">分</p>
+              <span id="seconds"></span>
+              <p class="d-inline display-4">秒</p>
+            </div>
+          </div>
         </div>
       </div>
-    </nav>
-  </header>
-  <main>
-    <div class="p-5 bg-info text-white text-center rounded">
-      <h1>整點搶秒殺爆品</h1>
     </div>
-    <div class="container">
-      <div class="row justify-content-center mt-5">
+    <div class="container-fluid">
+      <div class="row justify-content-center bg-warning py-5">
         <div class="col-4">
-          <img src="image/product.jpg" alt="product" width="400" height="400">
+          <img src="image/new_PS5.jpg" alt="product" width="400" height="400">
         </div>
-        <div class="col-4 mt-5">
-          <h1>PS5</h1>
-          <h3 class="text-decoration-line-through">13000</ㄘ>
-            <h3>下殺1折 <span class="fw-bolder fs-1">只要 $1000</span></h3>
-            <h5>限量: 1000組</h5>
-            <h3 class="border border-primary border-3 rounded-pill p-3 mt-3 text-center">9點準時開搶</h3>
-            <!-- <div id="timer">
-            <span id="hours"></span>hours
-            <span id="minutes"></span>minutes
-            <span id="seconds"></span>seconds
-          </div> -->
+        <div class="col-6 mt-1">
+          <h1 class="display-1 fw-bold">PS5</h1>
+          <h5 class="fw-bold display-5 text-danger">下殺1折</h5>
+          <h3 class="text-decoration-line-through d-inline me-2">17000</h3>
+          <h3 class="d-inline"><span class="text-danger">特價$</span><span class="display-4 text-danger">2000</span></h3>
+          <h5 class="mt-2 display-6">限量: 100組</h5>
+          <h3 class="border border-dark border-3 rounded-pill p-3 mt-4 text-center">搶購即將開始</h3>
         </div>
       </div>
     </div>
   </main>
-  <footer class="bg-primary py-3">
-    <!-- Copyright -->
-    <!-- <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-      © 2022 Copyright </div> -->
-    <h3 class="text-white text-center">© 2022 Miaosha. All Rights Reserved.</h3>
-    <!-- Copyright -->
+
+  <footer class="footer mt-auto py-3 bg-light text-center">
+    <div class="container">
+      <span class="text-muted">© 2022 Miaosha. All Rights Reserved.</span>
+    </div>
   </footer>
   <script src="https://code.jquery.com/jquery-3.6.1.min.js"
     integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
   <script src='//cdn.jsdelivr.net/npm/sweetalert2@11'></script>
   <script src="js/header.js"></script>
-  <!-- <script src='js/wait.js'></script> -->
+  <script src='js/wait.js'></script>
 </body>
 </html>

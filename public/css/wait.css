@@ -4,13 +4,21 @@ body {
 #timer {
   font-family: Arial, sans-serif;
   font-size: 20px;
-  color: #999;
+  color:  #fff5dd;
   letter-spacing: -1px;
+  background-image: url('../image/count-time-background.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 #timer span {
   font-size: 60px;
-  color: #333;
+  color: #091128;
   margin: 0 3px 0 15px;
+  padding: 0 6px;
+  background-color: #fff5dd;
+  border-radius: 8px;
+  font-weight: 600;
 }
 #timer span:first-child {
   margin-left: 0;

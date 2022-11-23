@@ -55,12 +55,12 @@ const signIn = async (req, res) => {
 
     if (result.error) {
         const status_code = result.status ? result.status : 403;
-        return res.status(status_code).send({ error: result.error });
+        return res.status(status_code).json({ error: '帳號密碼錯誤' });
     }
 
     const user = result.user;
     if (!user) {
-        return res.status(500).send({ error: 'Database Query Error' });
+        return res.status(500).json({ error: 'Database Query Error' });
     }
 
     return res.status(200).send({

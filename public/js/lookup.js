@@ -1,3 +1,4 @@
+const lookupPeriod = 60000; // 60000ms = 1 min
 window.localStorage.removeItem('pay_token'); // 將pay_token先移除掉
 if (window.localStorage.getItem('user_id') === null || window.localStorage.getItem('access_token') === null) {
     Swal.fire({
@@ -10,12 +11,7 @@ if (window.localStorage.getItem('user_id') === null || window.localStorage.getIt
         window.location.href = `${DNS}/member.html`;
     }, 1600);
 }
-const STATUS = {
-    FAIL: -1,
-    STANDBY: 0,
-    SUCCESS: 1,
-    PAID: 2,
-};
+
 const access_token = window.localStorage.getItem('access_token');
 
 const socket = io(CONSUMER_DNS, {
@@ -27,6 +23,9 @@ const socket = io(CONSUMER_DNS, {
 
 socket.on('connect', () => {
     socket.emit('lookup');
+    setInterval(() => {
+        socket.emit('lookup');
+    }, lookupPeriod);
 });
 
 socket.on('jwt', (jwt) => {
@@ -70,6 +69,18 @@ socket.on('notify', (result) => {
         // 搶購失敗後，導向失敗頁面
         setTimeout(() => {
             window.location.href = `${DNS}/failure.html`;
+        }, 2500);
+    }
+    if (result === STATUS.PAID) {
+        Swal.fire({
+            icon: 'info',
+            title: '您已購買成功',
+            showConfirmButton: false,
+            timer: 2000,
+        });
+        // 如果使用者購買成功後再進行搶購，會導向戰利品頁
+        setTimeout(() => {
+            window.location.href = `${DNS}/prize.html`;
         }, 2500);
     }
 });
