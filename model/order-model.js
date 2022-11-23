@@ -56,7 +56,7 @@ const addTransaction = async () => {
     try {
         if (Cache.ready) {
             const transaction = await Cache.incr(CACHE_TRANSACTION_KEY);
-            return transaction;
+            return Number(transaction);
         } else {
             throw new Error('Redis Disconnect');
         }
