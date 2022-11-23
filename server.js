@@ -29,10 +29,10 @@ const io = new Server(httpServer, {
 // io.adapter(createAdapter(pubClient, subClient));
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    // console.log('a user connected');
     socket.emit('time', Activity.year, Activity.month, Activity.date, Activity.hour, Activity.minute);
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        // console.log('user disconnected');
     });
 });
 
