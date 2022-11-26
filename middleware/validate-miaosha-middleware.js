@@ -10,7 +10,7 @@ Cache.on('ready', async () => {
 
 const validateMiaosha = async (req, res, next) => {
     if (global.isFull) {
-        return res.status(400).json({ message: '秒殺已結束' });
+        return res.status(200).json({ message: '秒殺已結束' });
     }
     if (!Activity.isStart()) {
         return res.status(400).json({ error: 'Activity has not started yet' });
