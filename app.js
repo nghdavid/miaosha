@@ -14,14 +14,13 @@ app.get('/api/health', (req, res) => {
 app.set('trust proxy', true);
 app.set('json spaces', 2);
 
-app.use(express.static('public'));
+// app.use(express.static('public'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
-morganBody(app, { logResponseBody: false });
+// morganBody(app, { logResponseBody: false });
 
 // CORS allow all
 app.use(cors());
-
 
 // API routes
 app.use('/api/' + API_VERSION, [miaoshaRoute]);
