@@ -17,7 +17,7 @@ app.set('json spaces', 2);
 // app.use(express.static('public'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: false }));
-// morganBody(app, { logResponseBody: false });
+morganBody(app, { logResponseBody: false });
 
 // CORS allow all
 app.use(cors());
