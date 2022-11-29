@@ -6,11 +6,14 @@ const STATUS = {
 };
 const apiVersion = '1.0';
 const question = 1;
-// const PUBLISHER_DNS = 'http://localhost:3000';
-// const CONSUMER_DNS = 'http://localhost:4000';
-// const DNS = 'http://localhost:5000';
-// const GENERAL_DNS = 'http://localhost:5000';
-const PUBLISHER_DNS = 'https://publisher.miaosha.click';
-const CONSUMER_DNS = 'https://consumer.miaosha.click';
-const DNS = 'https://miaosha.click';
-const GENERAL_DNS = 'https://general.miaosha.click';
+const PUBLISHER_DNS = 'http://localhost:3000';
+const CONSUMER_DNS = 'http://localhost:4000';
+const DNS = 'http://localhost:5000';
+const GENERAL_DNS = 'http://localhost:5000';
+// const PUBLISHER_DNS = 'https://publisher.miaosha.click';
+// const CONSUMER_DNS = 'https://consumer.miaosha.click';
+// const DNS = 'https://miaosha.click';
+// const GENERAL_DNS = 'https://general.miaosha.click';
+if (window.localStorage.getItem('user_id') && window.localStorage.getItem('access_token')) {
+    $('#login').text('已登入');
+}
