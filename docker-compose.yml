@@ -7,3 +7,5 @@ services:
     container_name: publisher
     ports:
         - "3000:3000"
+    env_file:
+        - .env     # path to your .env file
