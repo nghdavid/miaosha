@@ -9,6 +9,7 @@ if (window.localStorage.getItem('user_id') === null || window.localStorage.getIt
         window.location.href = `${DNS}/member.html`;
     }, 1600);
 }
+
 const socket = io(PUBLISHER_DNS, { transports: ['websocket'] });
 socket.on('connect', () => {
     $('#backup').hide();
@@ -27,7 +28,9 @@ socket.on('connect_error', () => {
 });
 socket.on('url', (url, password) => {
     console.log(url);
-    window.location.href = `${url}?hl=${password}`;
+    if (window.localStorage.getItem('user_id') && window.localStorage.getItem('access_token')) {
+        window.location.href = `${url}?hl=${password}`;
+    }
 });
 
 socket.on('time', (year, month, date, hour, min) => {

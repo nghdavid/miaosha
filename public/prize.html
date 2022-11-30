@@ -9,7 +9,7 @@
   <!-- <link rel='stylesheet' type='text/css' href='css/prize.css'> -->
   <title>戰利品</title>
 </head>
-<body  class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100">
   <header class="container-fluid pt-3 border-bottom border-2">
     <div class="d-flex flex-column flex-md-row align-items-center pb-3">
       <a href="./main.html" class="d-flex align-items-center text-dark text-decoration-none mx-3">
@@ -17,14 +17,14 @@
         <span class="fs-4">MIAOSHA</span>
       </a>
       <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto mx-5">
-        <a class="me-3 py-2 text-dark text-decoration-none" href="./member.html">登入</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" id='login' href="./member.html">登入</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="./prize.html">戰利品</a>
         <!-- <a class="me-3 py-2 text-dark text-decoration-none" href="#">Member</a> -->
         <!-- <a class="py-2 text-dark text-decoration-none" href="#">Pricing</a> -->
       </nav>
     </div>
   </header>
-  <main class="flex-shrink-0 text-center">
+  <main class="flex-shrink-0 text-center" style="display:none;">
     <h1 class="mt-3">您的戰利品!</h1>
     <h3 class="mt-3">恭喜您搶購到<span>PS5</span></h3>
     <h4 class="mt-3">您將在十分鐘後收到購買成功的信</h4>
@@ -36,7 +36,8 @@
       <span class="text-muted">© 2022 Miaosha. All Rights Reserved.</span>
     </div>
   </footer>
-  <script src='https://code.jquery.com/jquery-3.6.1.min.js' integrity='sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=' crossorigin='anonymous'></script>
+  <script src='https://code.jquery.com/jquery-3.6.1.min.js'
+    integrity='sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=' crossorigin='anonymous'></script>
   <script src='//cdn.jsdelivr.net/npm/sweetalert2@11'></script>
   <script src='js/header.js'></script>
   <script src='js/prize.js'></script>
