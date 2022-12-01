@@ -9,7 +9,12 @@ services:
     ports:
         - "3000:3000"
     environment:
-      TZ: Asia/Taipei
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
+      - DB_HOST=${ip}
+      - READ_DB_HOST=${ip}
+      - RABBIT_HOST=${ip}
     env_file:
         - .env     # path to your .env file
     depends_on:
@@ -27,7 +32,12 @@ services:
     ports:
         - "4000:4000"
     environment:
-      TZ: Asia/Taipei
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
+      - DB_HOST=${ip}
+      - READ_DB_HOST=${ip}
+      - RABBIT_HOST=${ip}
     env_file:
         - .env     # path to your .env file
     depends_on:
@@ -45,7 +55,12 @@ services:
     ports:
         - "5000:5000"
     environment:
-      TZ: Asia/Taipei
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
+      - DB_HOST=${ip}
+      - READ_DB_HOST=${ip}
+      - RABBIT_HOST=${ip}
     env_file:
         - .env     # path to your .env file
     depends_on:
@@ -61,7 +76,9 @@ services:
     image: nghdavid/setup:latest
     container_name: setup
     environment:
-      TZ: Asia/Taipei
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
     env_file:
         - .env     # path to your .env file
     depends_on:
