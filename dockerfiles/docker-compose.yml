@@ -1,0 +1,136 @@
+version: "3.7"
+services:
+  publisher:
+    build:
+      context: ../
+      dockerfile: ./dockerfiles/publisher/Dockerfile
+    image: nghdavid/publisher:latest
+    container_name: publisher
+    ports:
+        - "3000:3000"
+    environment:
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
+      - DB_HOST=${ip}
+      - READ_DB_HOST=${ip}
+      - RABBIT_HOST=${ip}
+    env_file:
+        - .env     # path to your .env file
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-cluster-creator
+      - mysql
+      - setup
+  consumer:
+    build:
+      context: ../
+      dockerfile: ./dockerfiles/consumer/Dockerfile
+    image: nghdavid/consumer:latest
+    container_name: consumer
+    ports:
+        - "4000:4000"
+    environment:
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
+      - DB_HOST=${ip}
+      - READ_DB_HOST=${ip}
+      - RABBIT_HOST=${ip}
+    env_file:
+        - .env     # path to your .env file
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-cluster-creator
+      - mysql
+      - setup
+  general:
+    build:
+      context: ../
+      dockerfile: ./dockerfiles/general/Dockerfile
+    image: nghdavid/general:latest
+    container_name: general
+    ports:
+        - "5000:5000"
+    environment:
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
+      - DB_HOST=${ip}
+      - READ_DB_HOST=${ip}
+      - RABBIT_HOST=${ip}
+    env_file:
+        - .env     # path to your .env file
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-cluster-creator
+      - mysql
+      - setup
+  setup:
+    build:
+      context: ../
+      dockerfile: ./dockerfiles/setup/Dockerfile
+    image: nghdavid/setup:latest
+    container_name: setup
+    environment:
+      - TZ=Asia/Taipei
+      - REDIS_HOST_1=${ip}
+      - REDIS_HOST_2=${ip}
+    env_file:
+        - .env     # path to your .env file
+    depends_on:
+      - redis-cluster-creator
+  redis-node1:
+    build:
+      context: redis
+    ports:
+      - "7000:7000"
+      - "17000:17000"
+    restart: always
+    entrypoint: [redis-server, /etc/redis/rediscluster.conf,    --port,"7000", --cluster-announce-ip,"${ip}"]
+  redis-node2:
+    build:
+      context: redis
+    ports:
+      - "7001:7001"
+      - "17001:17001"
+    restart: always
+    entrypoint: [redis-server, /etc/redis/rediscluster.conf,    --port,"7001",--cluster-announce-ip,"${ip}"]
+  redis-cluster-creator:
+    image: redis
+    entrypoint: [/bin/sh,-c,'echo "yes" | redis-cli -a pass.123 --cluster create ${ip}:7000 ${ip}:7000 ${ip}:7001 ${ip}:7001']
+    depends_on:
+      - redis-node1
+      - redis-node2
+  mysql:
+    image: mysql:8.0.31
+    container_name: mysql
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    environment:
+      - MYSQL_DATABASE=miaosha
+      - MYSQL_ROOT_USER=${DB_USERNAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - TZ='Asia/Taipei'
+    volumes:
+      - ./mysql/initdb:/docker-entrypoint-initdb.d #啟動初期數據位置
+      - ./mysql/datadir:/var/lib/mysql #數據庫位置
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf #Mysql 設置文件
+    restart: always
+    depends_on:
+      - redis-cluster-creator
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: web_phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=mysql
+    links:
+      - mysql
+    restart: always
