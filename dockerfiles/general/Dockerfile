@@ -3,6 +3,5 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
-# For Production
-EXPOSE 3000
+EXPOSE 5000
 CMD ["node", "general-app.js"]
