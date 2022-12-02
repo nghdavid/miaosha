@@ -1,9 +1,21 @@
 require('dotenv').config();
+const { SendMessageCommand } = require('@aws-sdk/client-sqs');
+const { sqsClient } = require('../util/sqsClient.js');
 const Order = require('../model/order-model');
 const Queue = require('../model/queue-model');
 const { STATUS } = require('../util/status');
-const { STOCK } = process.env;
+const { STOCK, QUEUE_URL } = process.env;
 const { generateOrderNum } = require('../util/order');
+
+const sendSQS = async (params) => {
+    try {
+        const data = await sqsClient.send(new SendMessageCommand(params));
+        console.info('Success SQS message sent. MessageID:', data.MessageId);
+        return data; // For unit tests.
+    } catch (err) {
+        console.log('Error', err);
+    }
+};
 
 // checkout controller
 const checkout = async (req, res, next) => {
@@ -40,6 +52,22 @@ const checkout = async (req, res, next) => {
         }
         console.info('庫存已全部賣完!!!!!!');
     }
+    // SQS parameter
+    const params = {
+        MessageAttributes: {
+            name: {
+                DataType: 'String',
+                StringValue: name,
+            },
+            email: {
+                DataType: 'String',
+                StringValue: email,
+            },
+        },
+        MessageBody: 'test local SQS',
+        QueueUrl: QUEUE_URL,
+    };
+    await sendSQS(params);
     return res.status(200).json({ message: '購買成功' });
 };
 
