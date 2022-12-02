@@ -2,7 +2,7 @@
 
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: EC2 general CD
 
 # Controls when the workflow will run
 on:
@@ -30,7 +30,7 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push Docker image
         with:
-          image: nghdavid/test1
+          image: nghdavid/publisher
           tags: latest
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -45,7 +45,8 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker login
-            sudo docker pull ${{secrets.DOCKER_USERNAME}}/test1
-            sudo docker stop docker-nodejs
-            sudo docker rm docker-nodejs
+            sudo docker pull ${{secrets.DOCKER_USERNAME}}/publisher
+            cd miaosha
+            git pull
+            sudo docker-compose down
             sudo docker-compose up -d
