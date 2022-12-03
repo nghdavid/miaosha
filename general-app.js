@@ -7,7 +7,7 @@ const productRoute = require('./route/product-route');
 
 // Express Initialization
 const express = require('express');
-const cors = require('cors');
+// const cors = require('cors');
 const app = express();
 app.get('/api/health', (req, res) => {
     res.sendStatus(200);
@@ -22,7 +22,7 @@ app.use(express.json());
 morganBody(app, { logResponseBody: false });
 
 // CORS allow all
-app.use(cors());
+// app.use(cors());
 
 // API routes
 app.use('/api/' + API_VERSION, [userRoute, orderRoute, productRoute]);
