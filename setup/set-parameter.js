@@ -1,13 +1,15 @@
 const Cache = require('../config/redis-cluster').pubClient;
 const { STOCK } = process.env;
 
-// const NUM_CONSUMER = Number(process.argv[2]);
 const YEAR = Number(process.argv[2]);
 const MONTH = Number(process.argv[3]);
 const DATE = Number(process.argv[4]);
 const HOUR = Number(process.argv[5]);
 const MINUTE = Number(process.argv[6]);
-
+let SECOND = Number(process.argv[7]);
+if (isNaN(SECOND)) {
+    SECOND = 0;
+}
 Cache.on('ready', async () => {
     // Send `FLUSHDB` command to all masters:
     const masters = Cache.nodes('master');
@@ -31,5 +33,6 @@ Cache.on('ready', async () => {
     await Cache.set('date', DATE);
     await Cache.set('hour', HOUR);
     await Cache.set('minute', MINUTE);
+    await Cache.set('second', SECOND);
     process.exit(0);
 });

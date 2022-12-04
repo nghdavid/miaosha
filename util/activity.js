@@ -33,8 +33,9 @@ class Activity {
         this.date = await Parameter.getDate();
         this.hour = await Parameter.getHour();
         this.minute = await Parameter.getMinute();
-        this.startTime = DateTime.local(this.year, this.month, this.date, this.hour - this.timeZoneDiff, this.minute).setZone('Asia/Taipei');
-        this.endTime = DateTime.local(this.year, this.month, this.date, this.hour - this.timeZoneDiff, this.minute)
+        this.second = await Parameter.getSecond();
+        this.startTime = DateTime.local(this.year, this.month, this.date, this.hour - this.timeZoneDiff, this.minute, this.second).setZone('Asia/Taipei');
+        this.endTime = DateTime.local(this.year, this.month, this.date, this.hour - this.timeZoneDiff, this.minute, this.second)
             .plus({ minutes: totalTime })
             .setZone('Asia/Taipei');
     }
