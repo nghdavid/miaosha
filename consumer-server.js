@@ -71,8 +71,6 @@ io.on('connection', async (socket) => {
                     console.debug(`來詢問的使用者${socket.data.userId}有搶購成功喔`);
                     const accessToken = issuePayJWT({
                         id: socket.data.userId,
-                        // name: socket.data.name,
-                        // email: socket.data.email,
                         price,
                         productId,
                     });
@@ -80,11 +78,10 @@ io.on('connection', async (socket) => {
                     io.to(socket.data.userId).emit('jwt', accessToken);
                     io.to(socket.data.userId).emit('notify', STATUS.SUCCESS);
                 } else {
-                    console.debug(`來詢問的使用者${socket.data.userId}過太久才詢問結果了`);
-                    // io.to(socket.data.userId).emit('notify', STATUS.FAIL);
+                    console.info(`來詢問的使用者${socket.data.userId}過太久才詢問結果了`);
                 }
             } else {
-                console.debug(`來查詢的使用者${socket.data.userId}的狀態為${status}`);
+                console.info(`來查詢的使用者${socket.data.userId}的狀態為${status}`);
                 io.to(socket.data.userId).emit('notify', status);
             }
             console.debug('');

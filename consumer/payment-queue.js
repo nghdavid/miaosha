@@ -40,7 +40,7 @@ const checkPayment = async (io) => {
             console.debug('檢查有無付款了喔');
             if (msg.content) {
                 const userId = Number(msg.content);
-                console.debug('The user id is: ', userId);
+                console.info('The user id is: ', userId);
                 const status = await Queue.getStatus(userId);
                 // 確認redis有無錯誤
                 if (status !== null && status.error) {
@@ -51,7 +51,7 @@ const checkPayment = async (io) => {
 
                 if (Number(status) === STATUS.PAID) {
                     // 使用者已經付款，庫存名額不會釋出
-                    console.debug(`User-${userId} 已經付過款`);
+                    console.info(`User-${userId} 已經付過款`);
                     const payment = await Queue.addSuccessPayment(); //記錄目前有幾個付款成功
                     // 如果記錄到成功的payment跟STOCK一樣多，代表這是最後一筆成功的訂單
                     // 也就是所有庫存算是正式賣完
@@ -73,7 +73,7 @@ const checkPayment = async (io) => {
                     return;
                 }
 
-                console.debug(`User-${userId} 忘記付款了`);
+                console.info(`User-${userId} 忘記付款了`);
                 io.to(userId).emit('notify', STATUS.FAIL);
                 await Queue.setStatus(userId, STATUS.FAIL); // 將逾時未付款者的狀態為更新為失敗
                 // 候補使用者搶購成功
