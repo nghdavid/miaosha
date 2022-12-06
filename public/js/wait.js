@@ -33,8 +33,8 @@ socket.on('url', (url, password) => {
     }
 });
 
-socket.on('time', (year, month, date, hour, min) => {
-    let compareDate = new Date(year, month - 1, date, hour, min);
+socket.on('time', (year, month, date, hour, min, sec) => {
+    let compareDate = new Date(year, month - 1, date, hour, min, sec);
     let timer = setInterval(function () {
         timeBetweenDates(compareDate);
     }, 1000);

@@ -30,7 +30,7 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
     // console.log('a user connected');
-    socket.emit('time', Activity.year, Activity.month, Activity.date, Activity.hour, Activity.minute);
+    socket.emit('time', Activity.year, Activity.month, Activity.date, Activity.hour, Activity.minute, Activity.second);
     socket.on('disconnect', () => {
         // console.log('user disconnected');
     });
