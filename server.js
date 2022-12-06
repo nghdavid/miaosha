@@ -1,11 +1,9 @@
 require('dotenv').config();
 const process = require('process');
 const { createServer } = require('http');
-// const { createAdapter } = require('@socket.io/redis-adapter');
 const { Server } = require('socket.io');
 const app = require('./app');
 const httpServer = createServer(app);
-// const { pubClient, subClient } = require('./config/redis-cluster');
 const Cache = require('./config/redis-cluster').pubClient;
 const ActivityClass = require('./util/activity');
 const Activity = new ActivityClass();
@@ -26,14 +24,9 @@ const io = new Server(httpServer, {
         // credentials: true,
     },
 });
-// io.adapter(createAdapter(pubClient, subClient));
 
 io.on('connection', (socket) => {
-    // console.log('a user connected');
     socket.emit('time', Activity.year, Activity.month, Activity.date, Activity.hour, Activity.minute, Activity.second);
-    socket.on('disconnect', () => {
-        // console.log('user disconnected');
-    });
 });
 
 httpServer.listen(port, () => {
@@ -46,9 +39,7 @@ Cache.on('ready', async () => {
 });
 
 function informUser() {
-    // console.log('Waiting');
     if (Activity.isStart()) {
-        // console.log('Start!');
         io.emit('url', url, password);
     }
 }

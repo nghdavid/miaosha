@@ -1,4 +1,3 @@
-// const Cache = require('../config/redis');
 const Cache = require('../config/redis-cluster').pubClient;
 const CACHE_USER_KEY = 'id:';
 const CACHE_STOCK_KEY = 'stock';
@@ -88,7 +87,6 @@ const getProductId = async () => {
     }
 };
 
-// CACHE_PRODUCT_ID_KEY;
 /**
  * * This function add 'stock' (+=1) in cache
  */

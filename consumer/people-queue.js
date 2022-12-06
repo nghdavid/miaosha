@@ -39,7 +39,7 @@ const consumer = async (io) => {
             console.debug('People queue 處理中....');
             if (msg.content) {
                 const userId = Number(msg.content);
-                console.debug('The user id is: ', userId);
+                console.info('The user id is: ', userId);
                 const status = await Queue.getStatus(userId);
                 // 確認redis有無錯誤
                 if (status !== null && status.error) {
