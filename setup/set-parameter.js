@@ -23,10 +23,6 @@ Cache.on('ready', async () => {
     await Cache.set('price', 100);
     console.info('Setting product id!!!');
     await Cache.set('product_id', 1);
-    // console.info('Setting consumer!!!');
-    // await Cache.set('num_consumer', NUM_CONSUMER);
-    // await Cache.sadd('consumers', [...Array(NUM_CONSUMER).keys()]);
-    // await Cache.sadd('pay_consumers', [...Array(NUM_CONSUMER).keys()]);
     console.info('Setting starting time!!!');
     await Cache.set('year', YEAR);
     await Cache.set('month', MONTH);
