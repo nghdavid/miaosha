@@ -64,10 +64,7 @@ const consumer = async (io) => {
             // 直接判定搶購失敗
             if (transactionNum >= STOCK) {
                 // 通知使用者搶購失敗
-                // TODO 可以再refactor
-                io.to(userId).emit('notify', STATUS.FAIL);
-                await Promise.all([Queue.setStatus(userId, STATUS.FAIL)]);
-                console.info('庫存已全部賣完');
+                await informFail(io, userId);
                 channel.ack(msg);
                 return;
             }
@@ -76,35 +73,46 @@ const consumer = async (io) => {
             // 若庫存為0，將使用者加入候補名單，並將使用者的status設為0(standby)
             // 庫存也要補回來(加一)
             if (stock < 0) {
-                console.info('加入候補名單');
                 // 通知使用者候補中
-                // TODO 可以再refactor
-                io.to(userId).emit('notify', STATUS.STANDBY);
-                await Promise.all([Queue.setStatus(userId, STATUS.STANDBY), Queue.addStock(), Queue.enqueue(CACHE_STANDBY_KEY, userId)]);
+                await informStandby(io, userId);
                 channel.ack(msg);
                 return;
             }
-
-            // 通知使用者搶購成功
-            const accessToken = issuePayJWT({
-                id: userId,
-                price,
-                productId,
-            });
-            // 給使用者結帳jwt
-            // TODO 可以再refactor
-            console.info(`給使用者${userId} JWT`);
-            io.to(userId).emit('jwt', accessToken);
-            io.to(userId).emit('notify', STATUS.SUCCESS);
-            await Queue.setStatus(userId, STATUS.SUCCESS);
             console.info('搶購成功! ', '現在庫存剩', stock, '個');
-            await Queue.saveSuccessTime(userId, Math.round(Date.now() / 1000)); // 記錄使用者何時搶購成功
+            // 通知使用者搶購成功
+            await informSuccess(io, userId, price, productId);
             await PaymentQueue.publishToQueue(EXCHANGE_PAY_NAME, STANDBY_QUEUE_NAME, msg.content, Number(TIME_LIMIT));
             channel.ack(msg);
         },
         { noAck: false }
     );
 };
+
+async function informSuccess(io, userId, price, productId) {
+    const accessToken = issuePayJWT({
+        id: userId,
+        price,
+        productId,
+    });
+    // 給使用者結帳jwt
+    console.info(`給使用者${userId} JWT`);
+    io.to(userId).emit('jwt', accessToken);
+    io.to(userId).emit('notify', STATUS.SUCCESS);
+    await Queue.setStatus(userId, STATUS.SUCCESS);
+    await Queue.saveSuccessTime(userId, Math.round(Date.now() / 1000)); // 記錄使用者何時搶購成功
+}
+
+async function informStandby(io, userId) {
+    console.info('加入候補名單');
+    io.to(userId).emit('notify', STATUS.STANDBY);
+    await Promise.all([Queue.setStatus(userId, STATUS.STANDBY), Queue.addStock(), Queue.enqueue(CACHE_STANDBY_KEY, userId)]);
+}
+
+async function informFail(io, userId) {
+    console.info('庫存已全部賣完');
+    io.to(userId).emit('notify', STATUS.FAIL);
+    await Queue.setStatus(userId, STATUS.FAIL);
+}
 
 module.exports = {
     consumer,
