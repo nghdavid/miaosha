@@ -36,5 +36,6 @@ Cache.on('ready', async () => {
     await Cache.set('hour', HOUR);
     await Cache.set('minute', MINUTE);
     await Cache.set('second', SECOND);
+    await Cache.disconnect();
     process.exit(0);
 });
