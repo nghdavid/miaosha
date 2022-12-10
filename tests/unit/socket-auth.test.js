@@ -1,4 +1,4 @@
-const { socketAuth } = require('../util/auth');
+const { socketAuth } = require('../../util/auth');
 describe('Test socket authentication', () => {
     let jwt;
     let user;

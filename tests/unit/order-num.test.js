@@ -1,4 +1,4 @@
-const { generateOrderNum } = require('../util/order');
+const { generateOrderNum } = require('../../util/order');
 describe('Test Order Num', () => {
     let today;
     beforeEach(() => {
