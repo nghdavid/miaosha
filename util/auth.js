@@ -13,7 +13,6 @@ async function socketAuth(accessToken) {
         const user = await promisify(jwt.verify)(accessToken, TOKEN_SECRET);
         return user;
     } catch (err) {
-        console.log('err', err);
         return new Error('請重新登入！');
     }
 }
