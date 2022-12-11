@@ -1,8 +1,10 @@
+require('dotenv').config();
 const validator = require('validator');
 const Cache = require('../config/redis-cluster').pubClient;
 const ActivityClass = require('../util/activity');
 const Activity = new ActivityClass();
 const answers = { 1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E' };
+const { NODE_ENV } = process.env;
 global.isFull = 0;
 
 Cache.on('ready', async () => {
@@ -12,6 +14,9 @@ Cache.on('ready', async () => {
 const validateMiaosha = async (req, res, next) => {
     if (global.isFull) {
         return res.status(200).json({ message: '秒殺已結束' });
+    }
+    if (NODE_ENV === 'test') {
+        await Activity.setTime();
     }
     if (!Activity.isStart()) {
         return res.status(400).json({ error: '活動尚未開始' });

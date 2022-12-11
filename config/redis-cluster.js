@@ -59,7 +59,7 @@ const testRedisConnection = async () => {
     }
 };
 
-setTimeout(testRedisConnection, 1000);
+// setTimeout(testRedisConnection, 1000);
 
 module.exports = {
     pubClient,
