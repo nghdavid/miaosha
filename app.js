@@ -19,7 +19,7 @@ morganBody(app, { logResponseBody: false });
 
 // CORS
 const corsOptions = {
-    origin: 'https://miaosha.click/',
+    origin: 'https://miaosha.click',
     optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
