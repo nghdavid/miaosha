@@ -8,7 +8,7 @@ const Cache = require('./config/redis-cluster').pubClient;
 const ActivityClass = require('./util/activity');
 const Activity = new ActivityClass();
 
-const { PORT_TEST, PORT, NODE_ENV, DNS } = process.env;
+const { PORT_TEST, PORT, NODE_ENV, DNS, WHITE_LIST } = process.env;
 const port = NODE_ENV == 'test' ? PORT_TEST : PORT;
 
 const url = `${DNS}/miaosha.html`;
@@ -19,7 +19,7 @@ const io = new Server(httpServer, {
         // 在測試階段先用*即可
         // origin: '*',
         // 等到有CDN時，在將origin轉成array形式，並加入CDN的域名
-        origin: ['https://miaosha.click'],
+        origin: [WHITE_LIST],
         methods: ['GET', 'POST'],
         credentials: true,
     },
