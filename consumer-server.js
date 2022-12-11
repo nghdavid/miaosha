@@ -9,16 +9,17 @@ const { consumer } = require('./consumer/people-queue');
 const { socketAuth } = require('./util/auth');
 const { pubClient, subClient } = require('./config/redis-cluster');
 const httpServer = createServer(app);
-const { CONSUMER_PORT_TEST, CONSUMER_PORT, NODE_ENV } = process.env;
+const { CONSUMER_PORT_TEST, CONSUMER_PORT, NODE_ENV, WHITE_LIST } = process.env;
 const port = NODE_ENV == 'test' ? CONSUMER_PORT_TEST : CONSUMER_PORT;
 
 const io = new Server(httpServer, {
     cors: {
         // 在測試階段先用*即可
+        // origin: '*',
         // 等到有CDN時，在將origin轉成array形式，並加入CDN的域名
-        // origin: ['https://stylish-test.click'],
-        origin: '*',
-        // credentials: true,
+        origin: [WHITE_LIST],
+        methods: ['GET', 'POST'],
+        credentials: true,
     },
 });
 io.adapter(createAdapter(pubClient, subClient));
