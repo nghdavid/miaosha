@@ -17,8 +17,12 @@ app.set('json spaces', 2);
 app.use(express.json());
 morganBody(app, { logResponseBody: false });
 
-// CORS allow all
-app.use(cors());
+// CORS
+const corsOptions = {
+    origin: 'https://miaosha.click/',
+    optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // API routes
 app.use('/api/' + API_VERSION, [miaoshaRoute]);
