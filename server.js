@@ -17,11 +17,11 @@ const password = 'th';
 const io = new Server(httpServer, {
     cors: {
         // 在測試階段先用*即可
+        // origin: '*',
         // 等到有CDN時，在將origin轉成array形式，並加入CDN的域名
-        // origin: ['https://stylish-test.click'],
-        origin: '*',
-        // methods: ['GET', 'POST'],
-        // credentials: true,
+        origin: ['https://miaosha.click'],
+        methods: ['GET', 'POST'],
+        credentials: true,
     },
 });
 
