@@ -1,6 +1,6 @@
 require('dotenv').config();
 const morganBody = require('morgan-body');
-const { API_VERSION } = process.env;
+const { API_VERSION, WHITE_LIST } = process.env;
 const miaoshaRoute = require('./route/miaosha-route');
 
 // Express Initialization
@@ -19,7 +19,7 @@ morganBody(app, { logResponseBody: false });
 
 // CORS
 const corsOptions = {
-    origin: 'https://miaosha.click',
+    origin: WHITE_LIST,
     optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
