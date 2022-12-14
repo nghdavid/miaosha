@@ -113,12 +113,15 @@ Tools: Redis, JWT token
 - Prevent .......
 
 ## Send email asynchronously
-When an user successfully pays, my backend system 
-would 
+When an user successfully checks out, checkout API 
+would send email and user id to SQS. After that, SQS would trigger Lambda to send email.
+
+
 ## How to prevent robot attack
 ## Decrease API response time with asynchronous processing
 
-## How to ensure the stability of other API (login, checkout) when miaosha activity starts?
+## How to ensure the stability of other API (login, checkout) when selling event starts?
+When flash sale happens, a huge influx would flow into the backend system and may influence other APIs. However, elastic load balancer would route different APIs to different target groups. Miaosha API would be routed to publisher target group. Thus, consumer and general target group would not be influenced by miaosha API.
 
 ## Queuing System
 
