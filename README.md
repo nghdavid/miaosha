@@ -102,8 +102,18 @@ Miaosha is a product-selling website which can handle the traffic from a million
 
 ## System design
 My system design's principle is to filter the traffic layer by layer. The filter consists of six layers.
-- CDN: Store static files (html, css, js) in CloudFront
-- Load Balancer: 
+- CDN:
+  * Store static files (html, css, js) in CloudFront
+- Load Balancer:
+  * Route different APIs to different target groups and multiple instances
+- Web server:
+  * Prevent malicious attack by nginx's rate limiter
+- Application server:
+  * Use WebSocket instead of short polling to decrease API requests
+  * Process asynchronously to speed up process time
+- Redis:
+  * Store stock in cache to decrease read and write latency
+  * Use cache to decrease DB loading
 
 ## Architecture
 - Server Architecture
@@ -128,7 +138,7 @@ would submit email and user id to SQS before responding to an user. After that, 
 - Consumer target group would check whether the user gets the chance to buy the product
 
 ## How to ensure the stability of other API (login, checkout) when selling event starts?
-- When flash sale happens, a huge influx would flow into the backend system and may influence other APIs. However, elastic load balancer would route different APIs to different target groups. Miaosha API would be routed to publisher target group. Thus, consumer and general target group would not be influenced by miaosha API.
+- When flash sale happens, a huge influx would flow into the backend system and may influence other APIs. However, elastic load balancer would route different APIs to different target groups. Miaosha API would be routed to publisher target group. Thus, consumer and general target group would not be influenced by miaosha API
 
 ## Queuing System
 - Release stocks when users forget to pay in 10-minute time limit
@@ -146,16 +156,28 @@ Tool: Redis List and RabbitMQ
 2. If consumer determined the user as standby, consumer would send the user id to redis list
 3. After 10 mins time limit, waiting queue would send the user id to payment consumer
 4. Payment consumer would check whether the user has paid or not
-5. If the user doesn't pay, the stock would be released and be given to standby user.
+5. If the user doesn't pay, the stock would be released and be given to standby user
 
 ## Turn on EC2 instances and ElastiCache before each selling event starts
 - Use CloudWatch EventBridge to schedule Lambda to turn on and off general instances
 - Use Schedule Action in auto scaling group to scale out instances
 ## Continuous Delivery
-- Implement continuous deployment by GitHub Actions, Docker Hub, Docker Compose to automatically update app versions in general instances.
+- Implement continuous deployment by GitHub Actions, Docker Hub and Docker Compose to automatically update app versions in general instances
 
 ## Load Test
-Concert ticket selling website must be capable of handling high traffic.
+Miaosha website must be capable of handling high traffic.
+I implemented a load test to check the max WebSocket connections and miaosha API QPS. 
+
+- Number of WebSocket connections
+  * Horizontal Scaling
+  * Vertical Scaling
+- Miaosha API QPS
+  * Horizontal Scaling
+  * Vertical Scaling
+
+I implemented a load test to check the max socket connections with both horizontal and vertical scaling and compared two scaling results & costs.
+
+Concert ticket selling website must be capable of handling high traffic
 
 I use WebSocket to confirm if a user is still on the page or in the queue, so I implemented a load test to check the max socket connections with both horizontal and vertical scaling and compared two scaling results & costs.
 
