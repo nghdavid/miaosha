@@ -1,6 +1,6 @@
 require('dotenv').config();
 const morganBody = require('morgan-body');
-const { API_VERSION } = process.env;
+const { API_VERSION, WHITE_LIST } = process.env;
 const miaoshaRoute = require('./route/miaosha-route');
 
 // Express Initialization
@@ -14,13 +14,15 @@ app.get('/api/health', (req, res) => {
 app.set('trust proxy', true);
 app.set('json spaces', 2);
 
-// app.use(express.static('public'));
 app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
 morganBody(app, { logResponseBody: false });
 
-// CORS allow all
-app.use(cors());
+// CORS
+const corsOptions = {
+    origin: WHITE_LIST,
+    optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // API routes
 app.use('/api/' + API_VERSION, [miaoshaRoute]);

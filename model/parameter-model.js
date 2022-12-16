@@ -5,6 +5,7 @@ const CACHE_MONTH_KEY = 'month';
 const CACHE_DATE_KEY = 'date';
 const CACHE_HOUR_KEY = 'hour';
 const CACHE_MINUTE_KEY = 'minute';
+const CACHE_SECOND_KEY = 'second';
 const CACHE_NUM_CONSUMER_KEY = 'num_consumer';
 const CACHE_CONSUMERS_KEY = 'consumers';
 const CACHE_PAY_CONSUMERS_KEY = 'pay_consumers';
@@ -105,6 +106,25 @@ const getMinute = async () => {
 };
 
 /**
+ * * This function gets start time (sec)
+ *
+ */
+const getSecond = async () => {
+    try {
+        if (Cache.ready) {
+            const second = await Cache.get(CACHE_SECOND_KEY);
+            return Number(second);
+        } else {
+            throw new Error('Redis Disconnect');
+        }
+    } catch (err) {
+        console.error('Error happen in getSecond model');
+        console.error(err);
+        return { error: 'Redis Error: getSecond model' };
+    }
+};
+
+/**
  * * This function gets number consumer
  *
  */
@@ -168,6 +188,7 @@ module.exports = {
     getPayConsumer,
     getNumConsumer,
     getMinute,
+    getSecond,
     getDate,
     getHour,
 };

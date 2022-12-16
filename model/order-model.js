@@ -58,12 +58,12 @@ const addTransaction = async () => {
             const transaction = await Cache.incr(CACHE_TRANSACTION_KEY);
             return Number(transaction);
         } else {
-            throw new Error('Redis Disconnect');
+            throw new Error('DB Disconnect');
         }
     } catch (err) {
         console.error('Error happen in addTransaction model');
         console.error(err);
-        return { error: 'Redis Error: addTransaction model' };
+        return { error: 'DB Error: addTransaction model' };
     }
 };
 

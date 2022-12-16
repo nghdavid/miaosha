@@ -77,11 +77,11 @@ const nativeSignIn = async (email, password) => {
     }
 };
 
-const getUserDetail = async (email, roleId) => {
+const getUserDetail = async (email) => {
     try {
         const [users] = await readDb.query('SELECT * FROM user WHERE email = ?', [email]);
         return users[0];
-    } catch (e) {
+    } catch (error) {
         return null;
     }
 };

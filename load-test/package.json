@@ -1,0 +1,23 @@
+{
+  "name": "miaosha-loading-test",
+  "version": "1.0.0",
+  "description": "Loading test code for miaosha project",
+  "main": "connect-limit.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nghdavid/miaosha-loading-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nghdavid/miaosha-loading-test/issues"
+  },
+  "homepage": "https://github.com/nghdavid/miaosha-loading-test#readme",
+  "dependencies": {
+    "socket.io-client": "^4.5.4"
+  }
+}

@@ -1,5 +1,5 @@
 const Cache = require('../config/redis-cluster').pubClient;
-const { STOCK, YEAR, MONTH, DATE, HOUR, MINUTE } = process.env;
+const { STOCK, YEAR, MONTH, DATE, HOUR, MINUTE, SECOND } = process.env;
 
 Cache.on('ready', async () => {
     // Send `FLUSHDB` command to all masters:
@@ -14,15 +14,13 @@ Cache.on('ready', async () => {
     await Cache.set('price', 100);
     console.info('Setting product id!!!');
     await Cache.set('product_id', 1);
-    // console.info('Setting consumer!!!');
-    // await Cache.set('num_consumer', NUM_CONSUMER);
-    // await Cache.sadd('consumers', [...Array(NUM_CONSUMER).keys()]);
-    // await Cache.sadd('pay_consumers', [...Array(NUM_CONSUMER).keys()]);
     console.info('Setting starting time!!!');
     await Cache.set('year', YEAR);
     await Cache.set('month', MONTH);
     await Cache.set('date', DATE);
     await Cache.set('hour', HOUR);
     await Cache.set('minute', MINUTE);
+    await Cache.set('second', SECOND);
+    await Cache.disconnect();
     process.exit(0);
 });
