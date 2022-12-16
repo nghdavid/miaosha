@@ -110,6 +110,7 @@ My system design's principle is to filter the traffic layer by layer. The filter
   * Store stock in cache to decrease read and write latency
   * Use cache to decrease DB loading
 <img width="60%" alt="system_design" src="./docs/readme/system_design.png">
+
 ## Architecture
 - There are three kinds of target groups (instances)
   * Publisher: Responsible for Miaosha API and Notify users the start of selling event with Socket.IO
@@ -119,8 +120,10 @@ My system design's principle is to filter the traffic layer by layer. The filter
 - Application load balancer can route different APIs to different target groups
 
 <img width="60%" alt="structure" src="./docs/readme/structure.jpg">
+
 ## Database Schema
 <img width="60%" alt="table_schema" src="./docs/readme/table_schema.png">
+
 ## How to prevent overselling
 Tools: Redis, JWT token
 
@@ -141,6 +144,7 @@ would submit email and user id to SQS before responding to an user. After that, 
 - Send user id to RabbitMQ
 - Consumer target group would check whether the user gets the chance to buy the product
 <img width="60%" alt="asynchronous" src="./docs/readme/asynchronous.png">
+
 ## How to ensure the stability of other API (login, checkout) when selling event starts?
 - When flash sale happens, a huge influx would flow into the backend system and may influence other APIs. However, elastic load balancer would route different APIs to different target groups. Miaosha API would be routed to publisher target group. Thus, consumer and general target group would not be influenced by miaosha API
 
@@ -159,10 +163,12 @@ Tool: Redis List and RabbitMQ
 4. Payment consumer would check whether the user has paid or not
 5. If the user doesn't pay, the stock would be released and be given to standby user
 <img width="60%" alt="standby" src="./docs/readme/standby.png">
+
 ## Turn on EC2 instances and ElastiCache before each selling event starts
 - Use CloudWatch EventBridge to schedule Lambda to turn on and off general instances
 - Use Schedule Action in auto scaling group to scale out instances
 <img width="60%" alt="standby" src="./docs/readme/clock.png">
+
 ## Continuous Deployment
 - Implement continuous deployment by GitHub Actions, Docker Hub and Docker Compose to automatically update app versions in general instances
 <img width="60%" alt="CD" src="./docs/readme/CD.png">
