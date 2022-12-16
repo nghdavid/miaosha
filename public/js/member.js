@@ -2,7 +2,13 @@
 $('.message a').click(function () {
   $('form').animate({ height: 'toggle', opacity: 'toggle' }, 'slow');
 });
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
 
+const userId = getRandomInt(100)+1;
+
+$('#email').val(`test${userId}@gmail.com`);
 const signIn = document.querySelector('.login-form');
 const signup = document.querySelector('.register-form');
 
