@@ -6,8 +6,8 @@ Miaosha is a product-selling website which can handle the traffic from a million
 
 ## Login
 
-- email: demo@test.com
-- password: demodemo
+- email: nghdavid123@gmail.com
+- password: test1234
 
 ## Table of Contents
 
