@@ -134,6 +134,7 @@ Tools: Redis, JWT token
 - When an user successfully checks out, checkout API 
 would submit email and user id to SQS before responding to an user. After that, SQS would trigger Lambda to send email with Nodemailer.
 <img width="60%" alt="SQS" src="./docs/readme/SQS.png">
+
 ## How to prevent robot attack
 - The user has to answer a question related to the product correctly
 - Setup rate limiter in Nginx to prevent malicious attacks
