@@ -16,6 +16,7 @@ Miaosha is a product-selling website which can handle the traffic from a million
 - [System design](#system-design)
 - [Architecture](#architecture)
 - [Database Schema](#database-schema)
+- [Demo](#demo)
 - [How to prevent overselling](#how-to-prevent-overselling)
 - [Send email asynchronously](#send-email-asynchronously)
 - [How to prevent robot attack](#how-to-prevent-robot-attack)
