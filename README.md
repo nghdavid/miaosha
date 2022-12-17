@@ -90,7 +90,8 @@ Miaosha is a product-selling website which can handle the traffic from a million
 - S3
 - Route53
 - JWT
-
+### Load test
+ - K6
 ### Test
 - Unit test: Jest, Supertest
 
@@ -176,7 +177,7 @@ Tool: Redis List and RabbitMQ
 
 ## Load Test
 Miaosha website must be capable of handling high traffic.
-I implemented a load test to check the max WebSocket connections and miaosha API QPS. 
+I implemented load tests to check the max WebSocket connections and miaosha API QPS. 
 
 - Number of WebSocket connections
   * Horizontal Scaling
@@ -187,15 +188,37 @@ I implemented a load test to check the max WebSocket connections and miaosha API
 
 
 Code: https://github.com/nghdavid/miaosha/tree/main/load-test
-
 ### Number of WebSocket connections
 - Number of WebSocket connections
   * Vertical Scaling
-    + Num of connection is correlated with 
+    + Num of connections is positively correlated with ram size
+    + t3a.micro has best cost performance ratio in terms of num of connections
+    + However, t3a.micro would crush with too many connections (>40000)
+    + Therefore, I select t3a.small for horizontal scaling
+<img width="40%" alt="CD" src="./docs/readme/socket_vertical.png">
+<br>
+<img width="40%" alt="CD" src="./docs/readme/socket_ram.png">
 
-<img width="60%" alt="CD" src="./docs/readme/socket_vertical.png">
+  * Horizontal Scaling
+    + With 6 t3a.small instances, my backend system can maintain 300,000 WebSocket connections
+<img width="40%" alt="CD" src="./docs/readme/socket_horizontal_scale_up_result.png">
+
 
 ### Miaosha API QPS
+I used K6 to perform miaosha API load test.
+  * Load test's criteria:
+    + Ratio of http_req_failed < 1%
+    + 95% of http_req_duration < 1 sec
+  * Vertical Scaling
+    + QPS is not correlated with the number of cpu and ram size
+    + Bandwidth is bottleneck for QPS's elevation (Compare t3a.medium and c5.large)
+    + t3.nano has best cost performance ratio in terms of QPS
+    + Therefore, I select t3.nano for horizontal scaling
+<img width="40%" alt="CD" src="./docs/readme/miaosha_vertical.png">
+
+  * Horizontal Scaling
+    + With 8 t3.nano instances, my backend system can reach 20,000 QPS for miaosha API
+<img width="40%" alt="CD" src="./docs/readme/miaosha_horizontal_scale_up_result.png">
 
 ## How to start my project
 ```
@@ -207,8 +230,11 @@ ipconfig getifaddr en0 # Get your ip
 # Modify .env (ip, YEAR, MONTH, DATE, HOUR, MINUTE, SECOND)
 ./start.sh
 # Go to http://localhost:5000/main.html
+# Account: test1@test.com Password: 123456789
 # Stop docker
 ./stop.sh
 ```
+
 ## Future Features
 - If there are already too many users send id to miaosha API, my backend system can change elastic load balancer's response. Elastic load balancer can directly return 'The activity is over' instead of routing requests to publisher target group.
+- Dynamic url
