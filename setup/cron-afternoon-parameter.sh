@@ -12,4 +12,4 @@ echo Current DATE is: ${DATE}
 #echo Current MINUTE is: ${MINUTE}
 #echo Current SECOND is: ${SECOND}
 #node ./set-parameter.js ${YEAR} ${MONTH} ${DATE} ${HOUR} ${MINUTE} ${SECOND}
-/usr/bin/node /home/ec2-user/miaosha/setup/set-parameter.js ${YEAR} ${MONTH} ${DATE} 15 0 0
+/usr/bin/node /home/ec2-user/miaosha/setup/set-parameter.js ${YEAR} ${MONTH} ${DATE} 14 0 0
