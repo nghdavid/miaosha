@@ -72,7 +72,7 @@ Miaosha is a product-selling website which can handle the traffic from a million
 ### Cache
 - ElastiCache (Redis cluster)
 
-### Message Broker
+### Message broker
 - RabbitMQ
 
 ### Container
@@ -108,7 +108,7 @@ My system design's principle is to filter the traffic layer by layer. The filter
   * Use WebSocket instead of short polling to decrease API requests
   * Process asynchronously to speed up process time
 - Redis:
-  * Store stock in cache to decrease read and write latency
+  * Store stock in cache to decrease read/write latency and increase concurrency
   * Use cache to decrease DB loading
 <img width="60%" alt="system_design" src="./docs/readme/system_design.png">
 
@@ -116,11 +116,12 @@ My system design's principle is to filter the traffic layer by layer. The filter
 - There are three kinds of target groups (instances)
   * Publisher: Responsible for Miaosha API and Notify users the start of selling event with Socket.IO
   * Consumer: Check whether users successfully get the chance to buy and inform users of results.
-  * General: Process login, checkout, etc., API
+  * General: Process general API (login, checkout, ...)
 - Publisher, consumer, mysql read replica, redis cluster are horizontally scalable
 - Application load balancer can route different APIs to different target groups
+- Use WebSocket to actively inform users
 
-<img width="60%" alt="structure" src="./docs/readme/structure.jpg">
+<img width="80%" alt="structure" src="./docs/readme/structure.jpg">
 
 ## Database Schema
 <img width="60%" alt="table_schema" src="./docs/readme/table_schema.png">
@@ -157,7 +158,7 @@ would submit email and user id to SQS before responding to an user. After that, 
 
 ### How do I implement the queuing system?
 
-Tool: Redis List and RabbitMQ
+Tool: Redis List and RabbitMQ (Dead Letter Exchange)
 
 1. If consumer determined the user as successful, consumer would send the user id to waiting queue with dead letter exchange.
 2. If consumer determined the user as standby, consumer would send the user id to redis list.
@@ -167,7 +168,7 @@ Tool: Redis List and RabbitMQ
 <img width="60%" alt="standby" src="./docs/readme/standby.png">
 
 ## Turn on EC2 instances and ElastiCache before each selling event starts
-- Use CloudWatch EventBridge to schedule Lambda to turn on and off general instances
+- Use CloudWatch EventBridge to schedule Lambda to turn on and off EC2 instances and Elasticache
 - Use Schedule Action in auto scaling group to scale out instances
 <img width="60%" alt="standby" src="./docs/readme/clock.png">
 
@@ -236,5 +237,6 @@ ipconfig getifaddr en0 # Get your ip
 ```
 
 ## Future Features
-- If there are already too many users send id to miaosha API, my backend system can change elastic load balancer's response. Elastic load balancer can directly return 'The activity is over' instead of routing requests to publisher target group.
+- If too many users send id to miaosha API, my backend system can change elastic load balancer's response. Elastic load balancer can directly return 'The activity is over' instead of routing requests to publisher target group.
 - Dynamic url
+- Use Code Deploy to update multiple instances
