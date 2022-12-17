@@ -126,6 +126,24 @@ My system design's principle is to filter the traffic layer by layer. The filter
 ## Database Schema
 <img width="60%" alt="table_schema" src="./docs/readme/table_schema.png">
 
+## Demo
+
+### Panic buy (搶購)
+<img width="60%" alt="miaosha" src="./docs/readme/miaosha.gif">
+<br>
+
+### Standby (候補機制)
+<img width="60%" alt="standby" src="./docs/readme/standby.gif">
+<br>
+
+### Stock release (庫存釋放給下一位使用者)
+<img width="60%" alt="release_stock" src="./docs/readme/release_stock.gif">
+<br>
+
+### Checkout (結帳)
+<img width="60%" alt="checkout" src="./docs/readme/checkout.gif">
+
+
 ## How to prevent overselling
 Tools: Redis, JWT token
 
