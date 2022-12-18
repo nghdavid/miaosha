@@ -15,6 +15,7 @@ Miaosha is a product-selling website which can handle the traffic from a million
 - [Backend Technique](#backend-technique)
 - [System design](#system-design)
 - [Architecture](#architecture)
+- [Workflow](#workflow)
 - [Database Schema](#database-schema)
 - [Demo](#demo)
 - [How to prevent overselling](#how-to-prevent-overselling)
@@ -124,6 +125,10 @@ My system design's principle is to filter the traffic layer by layer. The filter
 
 <img width="80%" alt="structure" src="./docs/readme/structure.jpg">
 
+## Workflow
+<img width="60%" alt="workflow" src="./docs/readme/workflow.jpg">
+
+
 ## Database Schema
 <img width="60%" alt="table_schema" src="./docs/readme/table_schema.png">
 
@@ -150,6 +155,7 @@ Tools: Redis, JWT token
 
 - Use atomic operation in redis to prevent race condition
 - When an user got the chance to buy, the backend system would give the successful user JWT token with short expire time. The user need to submit their JWT token for verification when he checkout. If the user doesn't checkout in 10-minute time limit, the user cannot checkout successfully because JWT token is expired. Therefore, this stock is released and cannot be bought by the user.
+<img width="60%" alt="checkout" src="./docs/readme/checkout.png">
 
 ## Send email asynchronously
 - When an user successfully checks out, checkout API 
