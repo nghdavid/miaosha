@@ -154,7 +154,7 @@ My system design's principle is to filter the traffic layer by layer. The filter
 ## How to prevent robot attack
 - The user has to answer a question related to the product correctly
 - Setup rate limiter in Nginx to prevent malicious attacks
-<img width="15%" alt="answer" src="./docs/readme/answer.png">
+<img width="30%" alt="answer" src="./docs/readme/answer.png">
 
 ## How to prevent overselling
 Tools: Redis, JWT token
@@ -190,7 +190,7 @@ Tool: Redis List and RabbitMQ (Dead Letter Exchange)
 3. After 10 mins time limit, waiting queue would send the user id to payment consumer.
 4. Payment consumer would check whether the user has paid or not.
 5. If the user doesn't pay, the stock would be released and be given to standby user.
-<img width="60%" alt="standby" src="./docs/readme/standby.png">
+<img width="70%" alt="standby" src="./docs/readme/standby.png">
 
 ## Turn on EC2 instances and ElastiCache before each selling event starts
 - Use CloudWatch EventBridge to schedule Lambda to turn on and off EC2 instances and Elasticache
@@ -221,18 +221,18 @@ Code: https://github.com/nghdavid/miaosha/tree/main/load-test
     + t3a.micro has best cost performance ratio in terms of num of connections
     + However, t3a.micro would crush with too many connections (>40000)
     + Therefore, I select t3a.small for horizontal scaling
-<img width="40%" alt="CD" src="./docs/readme/socket_vertical.png">
+<img width="50%" alt="CD" src="./docs/readme/socket_vertical.png">
 <br>
-<img width="40%" alt="CD" src="./docs/readme/socket_ram.png">
+<img width="50%" alt="CD" src="./docs/readme/socket_ram.png">
 
   * Horizontal Scaling
     + With 6 t3a.small instances, my backend system can maintain 300,000 WebSocket connections
-<img width="40%" alt="CD" src="./docs/readme/socket_horizontal_scale_up_result.png">
+<img width="50%" alt="CD" src="./docs/readme/socket_horizontal_scale_up_result.png">
 
 
 ### Miaosha API QPS
 I used K6 to perform miaosha API load test.
-  * Load test's criteria:
+  * Load test's criteria for passing:
     + Ratio of http_req_failed < 1%
     + 95% of http_req_duration < 1 sec
   * Vertical Scaling
@@ -240,11 +240,11 @@ I used K6 to perform miaosha API load test.
     + Bandwidth is bottleneck for QPS's elevation (Compare t3a.medium and c5.large)
     + t3.nano has best cost performance ratio in terms of QPS
     + Therefore, I select t3.nano for horizontal scaling
-<img width="40%" alt="CD" src="./docs/readme/miaosha_vertical.png">
+<img width="50%" alt="CD" src="./docs/readme/miaosha_vertical.png">
 
   * Horizontal Scaling
     + With 8 t3.nano instances, my backend system can reach 20,000 QPS for miaosha API
-<img width="40%" alt="CD" src="./docs/readme/miaosha_horizontal_scale_up_result.png">
+<img width="50%" alt="CD" src="./docs/readme/miaosha_horizontal_scale_up_result.png">
 
 ## How to start my project
 ```
