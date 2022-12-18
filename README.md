@@ -1,5 +1,5 @@
 # Miaosha
-Miaosha is a product-selling website which can handle the traffic from a million of users. My backend system can reach 20,000 QPS with 8 t3.nano instances and maintain 300,000 WebSocket connections with 6 t3a.small instances.
+Miaosha is a product-selling website which can handle the traffic from a million of users. My backend system can process 20,000 QPS with 8 t3.nano instances and maintain 300,000 WebSocket connections with 6 t3a.small instances.
 
 - Website Link: https://miaosha.click/
 - Explanation Video: https://drive.google.com/file/d/1Y3m75dhT6n5ikO_NZSxNYeaZeiIZEPPO/view?usp=sharing
@@ -130,7 +130,7 @@ My system design's principle is to filter the traffic layer by layer. The filter
 
 
 ## Database Schema
-<img width="60%" alt="table_schema" src="./docs/readme/table_schema.png">
+<img width="70%" alt="table_schema" src="./docs/readme/table_schema.png">
 
 ## Demo
 
@@ -234,17 +234,18 @@ Code: https://github.com/nghdavid/miaosha/tree/main/load-test
 I used K6 to perform miaosha API load test.
   * Load test's criteria for passing:
     + Ratio of http_req_failed < 1%
-    + 95% of http_req_duration < 1 sec
+    + median of http_req_duration < 1 sec
   * Vertical Scaling
     + QPS is not correlated with the number of cpu and ram size
     + Bandwidth is bottleneck for QPS's elevation (Compare t3a.medium and c5.large)
     + t3.nano has best cost performance ratio in terms of QPS
     + Therefore, I select t3.nano for horizontal scaling
-<img width="50%" alt="CD" src="./docs/readme/miaosha_vertical.png">
+<img width="50%" alt="miaosha_vertical" src="./docs/readme/miaosha_vertical.png">
 
   * Horizontal Scaling
     + With 8 t3.nano instances, my backend system can reach 20,000 QPS for miaosha API
-<img width="50%" alt="CD" src="./docs/readme/miaosha_horizontal_scale_up_result.png">
+<img width="50%" alt="miaosha_horizontal" src="./docs/readme/miaosha_horizontal_scale_up_result.png">
+<img width="50%" alt="k6" src="./docs/readme/k6.png">
 
 ## How to start my project
 ```
