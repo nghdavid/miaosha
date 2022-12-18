@@ -32,19 +32,19 @@ Miaosha is a product-selling website which can handle the traffic from a million
 
 ## Main Features
 
-- Actively informed users with WebSocket instead of short polling to decrease API requests
-- Improved API efficiency by processing asynchronously with RabbitMQ
-- Achieved high concurrency with distributed system including Publisher, Consumer, MySQL read replica, and Redis cluster
-- Routed high traffic API and general API to different EC2 target groups with Elastic Load Balancer to ensure the stability of other API
-- Prevent overselling with atomic operation in Redis and short-TTL JWT
-- Sent emails asynchronously with SQS and Lambda
-- Complete queuing system with RabbitMQ (Dead letter exchange)
-- Used EventBridge to schedule Lambda to start EC2 before each event
-- Prevented malicious attacks using Nginx’s rate limiter
-- Applied CloudFront as CDN to reduce bandwidth loading and latency
-- Packaged Miaosha system in Docker Compose as development environment, including Node.js, MySQL, Redis cluster, RabbitMQ, and phpMyAdmin
-- Continuously deployed with GitHub Actions and Docker Hub
-- Performed unit test and integration test by Jest and Supertest
+- Actively informed users with **WebSocket** instead of short polling to decrease API requests
+- Improved API efficiency by processing asynchronously with **RabbitMQ**
+- Achieved high concurrency with **distributed** system including Publisher, Consumer, MySQL read replica, and Redis cluster
+- Routed high traffic API and general API to different EC2 target groups with **Elastic Load Balancer** to ensure the stability of other API
+- Prevent overselling with atomic operation in **Redis** and short-TTL JWT
+- Sent emails asynchronously with **SQS** and **Lambda**
+- Complete queuing system with **RabbitMQ** (**Dead letter exchange**)
+- Used **EventBridge** to schedule **Lambda** to start EC2 before each event
+- Prevented malicious attacks using **Nginx’s** rate limiter
+- Applied **CloudFront** as CDN to reduce bandwidth loading and latency
+- Packaged Miaosha system in **Docker Compose** as development environment, including Node.js, MySQL, Redis cluster, RabbitMQ, and phpMyAdmin
+- Continuously deployed with **GitHub Actions** and **Docker Hub**
+- Performed **unit test** and **integration test** by Jest and Supertest
 
 ## Backend Technique
 
@@ -180,6 +180,7 @@ would submit email and user id to SQS before responding to an user. After that, 
 - Release stocks when users forget to pay in 10-minute time limit
 - Actively inform standby users of successful results via **Socket.IO**
 - Store list of standby users in **Redis** List
+- Complete waiting queue with Dead Letter Exchange
 
 ### How do I implement the queuing system?
 
