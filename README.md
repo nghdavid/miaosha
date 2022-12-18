@@ -32,19 +32,19 @@ Miaosha is a product-selling website which can handle the traffic from a million
 
 ## Main Features
 
-- Actively informed users with WebSocket instead of short polling to decrease API requests
-- Improved API efficiency by processing asynchronously with RabbitMQ
-- Achieved high concurrency with distributed system including Publisher, Consumer, MySQL read replica, and Redis cluster
-- Routed high traffic API and general API to different EC2 target groups with Elastic Load Balancer to ensure the stability of other API
-- Prevent overselling with atomic operation in Redis and short-TTL JWT
-- Sent emails asynchronously with SQS and Lambda
-- Complete queuing system with RabbitMQ (Dead letter exchange)
-- Used EventBridge to schedule Lambda to start EC2 before each event
-- Prevented malicious attacks using Nginx’s rate limiter
-- Applied CloudFront as CDN to reduce bandwidth loading and latency
-- Packaged Miaosha system in Docker Compose as development environment, including Node.js, MySQL, Redis cluster, RabbitMQ, and phpMyAdmin
-- Continuously deployed with GitHub Actions and Docker Hub
-- Performed unit test and integration test by Jest and Supertest
+- Actively informed users with **WebSocket** instead of short polling to decrease API requests
+- Improved API efficiency by processing asynchronously with **RabbitMQ**
+- Achieved high concurrency with **distributed** system including Publisher, Consumer, MySQL read replica, and Redis cluster
+- Routed high traffic API and general API to different EC2 target groups with **Elastic Load Balancer** to ensure the stability of other API
+- Prevent overselling with atomic operation in **Redis** and short-TTL JWT
+- Sent emails asynchronously with **SQS** and **Lambda**
+- Complete queuing system with **RabbitMQ** (**Dead letter exchange**)
+- Used **EventBridge** to schedule **Lambda** to start EC2 before each event
+- Prevented malicious attacks using **Nginx’s** rate limiter
+- Applied **CloudFront** as CDN to reduce bandwidth loading and latency
+- Packaged Miaosha system in **Docker Compose** as development environment, including Node.js, MySQL, Redis cluster, RabbitMQ, and phpMyAdmin
+- Continuously deployed with **GitHub Actions** and **Docker Hub**
+- Performed **unit test** and **integration test** by Jest and Supertest
 
 ## Backend Technique
 
@@ -149,23 +149,18 @@ My system design's principle is to filter the traffic layer by layer. The filter
 ### Checkout (結帳)
 <img width="60%" alt="checkout" src="./docs/readme/checkout.gif">
 
-
-## How to prevent overselling
-Tools: Redis, JWT token
-
-- Use atomic operation in redis to prevent race condition
-- When an user got the chance to buy, the backend system would give the successful user JWT token with short expire time. The user need to submit their JWT token for verification when he checkout. If the user doesn't checkout in 10-minute time limit, the user cannot checkout successfully because JWT token is expired. Therefore, this stock is released and cannot be bought by the user.
-<img width="60%" alt="checkout" src="./docs/readme/checkout.png">
-
-## Send email asynchronously
-- When an user successfully checks out, checkout API 
-would submit email and user id to SQS before responding to an user. After that, SQS would trigger Lambda to send email with Nodemailer.
-<img width="60%" alt="SQS" src="./docs/readme/SQS.png">
+<hr>
 
 ## How to prevent robot attack
 - The user has to answer a question related to the product correctly
 - Setup rate limiter in Nginx to prevent malicious attacks
-<img width="30%" alt="answer" src="./docs/readme/answer.png">
+<img width="15%" alt="answer" src="./docs/readme/answer.png">
+
+## How to prevent overselling
+Tools: Redis, JWT token
+- Use atomic operation in redis to prevent race condition
+- When an user got the chance to buy, the backend system would give the successful user JWT token with short expire time. The user need to submit their JWT token for verification when he checkout. If the user doesn't checkout in 10-minute time limit, the user cannot checkout successfully because JWT token is expired. Therefore, this stock is released and cannot be bought by the user.
+<img width="60%" alt="checkout" src="./docs/readme/checkout.png">
 
 ## Asynchronously process requests
 - Only check user's answer and time in publisher target group
@@ -173,13 +168,18 @@ would submit email and user id to SQS before responding to an user. After that, 
 - Consumer target group would check whether the user gets the chance to buy the product
 <img width="60%" alt="asynchronous" src="./docs/readme/asynchronous.png">
 
+## Send email asynchronously
+- When an user successfully checks out, checkout API would submit email and user id to SQS before responding to an user. After that, SQS would trigger Lambda to send email with Nodemailer.
+<img width="60%" alt="SQS" src="./docs/readme/SQS.png">
+
 ## How to ensure the stability of other API (login, checkout) when selling event starts?
 - When flash sale happens, a huge influx would flow into the backend system and may influence other APIs. However, elastic load balancer would route different APIs to different target groups. Miaosha API would be routed to publisher target group. Thus, consumer and general target group would not be influenced by miaosha API.
 
-## Queuing System
+## Queuing System (候補機制)
 - Release stocks when users forget to pay in 10-minute time limit
 - Actively inform standby users of successful results via **Socket.IO**
 - Store list of standby users in **Redis** List
+- Complete waiting queue with Dead Letter Exchange
 
 ### How do I implement the queuing system?
 
